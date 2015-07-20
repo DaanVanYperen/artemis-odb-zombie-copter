@@ -2,8 +2,17 @@ buildscript {
     repositories {
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+        jcenter()
     }
     dependencies {
+        classpath 'de.richsource.gradle.plugins:gwt-gradle-plugin:0.6'
+        classpath 'com.android.tools.build:gradle:1.2.3'
+        classpath 'org.robovm:robovm-gradle-plugin:1.5.0'
+
+        // lib for artemis-odb weaving.
+        // see https://github.com/junkdog/artemis-odb/wiki/Bytecode-weaving
+        classpath 'net.onedaybeard.artemis:artemis-odb-gradle-plugin:0.10.1'
     }
 }
 
@@ -17,8 +26,8 @@ allprojects {
         gdxVersion = '1.6.4'
         roboVMVersion = '1.5.0'
         box2DLightsVersion = '1.4'
-        ashleyVersion = '1.4.0'
         aiVersion = '1.5.0'
+        artemisVersion = '0.10.1' // edit version artemis-odb-gradle-plugin, see buildscript.dependencies.classpath above.
     }
 
     repositories {
@@ -43,13 +52,25 @@ project(":desktop") {
 project(":core") {
     apply plugin: "java"
 
+    configurations {
+        provided
+    }
+
+    sourceSets {
+        // run the annotation processor compile time.
+        main { compileClasspath += [configurations.provided] }
+    }
 
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
-        compile "com.badlogicgames.ashley:ashley:$ashleyVersion"
         compile "net.dermetfan.libgdx-utils:libgdx-utils-box2d:0.13.0"
         compile "net.dermetfan.libgdx-utils:libgdx-utils:0.13.0"
+
+        // Artemis-odb
+        compile "net.onedaybeard.artemis:artemis-odb:$artemisVersion"
+        // Artemis-odb annotation processor (see https://github.com/junkdog/artemis-odb/wiki/EntityFactory)
+        provided "net.onedaybeard.artemis:artemis-odb-processor:$artemisVersion"
     }
 }
 
