@@ -1,9 +1,8 @@
 package com.deftwun.zombiecopter.systems;
 
-import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.EntityListener;
-import com.badlogic.ashley.core.Family;
-import com.badlogic.ashley.systems.IteratingSystem;
+import com.artemis.Aspect;
+import com.artemis.Entity;
+import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
@@ -17,7 +16,7 @@ import com.deftwun.zombiecopter.SpriteLayer;
 import com.deftwun.zombiecopter.components.PhysicsComponent;
 import com.deftwun.zombiecopter.components.SpriteComponent;
 
-public class SpriteRenderSystem extends IteratingSystem implements EntityListener{
+public class SpriteRenderSystem extends EntityProcessingSystem {
 	private Logger logger;
 	private int LOG_LEVEL = Logger.INFO;
 	
@@ -27,7 +26,7 @@ public class SpriteRenderSystem extends IteratingSystem implements EntityListene
 	
 	@SuppressWarnings("unchecked")
 	public SpriteRenderSystem() {		
-		super(Family.all(PhysicsComponent.class,SpriteComponent.class).get());		
+		super(Aspect.all(PhysicsComponent.class, SpriteComponent.class));
 		logger = new Logger("SpriteRenderSystem",LOG_LEVEL);
 		logger.debug("initializing");
 		batch = new SpriteBatch();
@@ -37,7 +36,7 @@ public class SpriteRenderSystem extends IteratingSystem implements EntityListene
 	}
 	
 	@Override
-	protected void processEntity(Entity entity, float deltaTime) {		
+	protected void process(Entity entity) {
 		SpriteComponent spriteCom = App.engine.mappers.sprite.get(entity);
 		PhysicsComponent physics = App.engine.mappers.physics.get(entity);
 		
@@ -80,7 +79,7 @@ public class SpriteRenderSystem extends IteratingSystem implements EntityListene
 	}
 
 	@Override
-	public void entityAdded(Entity entity) {
+	public void inserted(Entity entity) {
 		SpriteComponent spriteCom = App.engine.mappers.sprite.get(entity);
 		if (spriteCom == null) return;
 		logger.debug("SpriteComponent added " + entity);
@@ -90,7 +89,7 @@ public class SpriteRenderSystem extends IteratingSystem implements EntityListene
 	}
 
 	@Override
-	public void entityRemoved(Entity entity) {
+	public void removed(Entity entity) {
 		SpriteComponent spriteCom = App.engine.mappers.sprite.get(entity);
 		if (spriteCom == null) return;
 		logger.debug("SpriteComponent removed " + entity);
