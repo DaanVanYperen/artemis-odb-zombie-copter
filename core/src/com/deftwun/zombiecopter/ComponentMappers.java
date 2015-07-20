@@ -1,33 +1,62 @@
 package com.deftwun.zombiecopter;
-import com.badlogic.ashley.core.ComponentMapper;
+import com.artemis.ComponentMapper;
+import com.artemis.World;
 import com.deftwun.zombiecopter.components.*;
 
 public class ComponentMappers{
-	public ComponentMapper<GunComponent> gun = ComponentMapper.getFor(GunComponent.class);
-	public ComponentMapper<JumpComponent> jump = ComponentMapper.getFor(JumpComponent.class);
-    public ComponentMapper<LedgeHangComponent> ledge = ComponentMapper.getFor(LedgeHangComponent.class);
-    public ComponentMapper<LookComponent> look = ComponentMapper.getFor(LookComponent.class);
-	public ComponentMapper<PhysicsComponent> physics = ComponentMapper.getFor(PhysicsComponent.class);
-    public ComponentMapper<PlayerComponent> player = ComponentMapper.getFor(PlayerComponent.class);
-    public ComponentMapper<ThrusterComponent> thrust = ComponentMapper.getFor(ThrusterComponent.class);
-	public ComponentMapper<WalkComponent> walk = ComponentMapper.getFor(WalkComponent.class);
-	public ComponentMapper<HealthComponent> health = ComponentMapper.getFor(HealthComponent.class);
-	public ComponentMapper<TimeToLiveComponent> timeToLive = ComponentMapper.getFor(TimeToLiveComponent.class);
-	public ComponentMapper<BulletComponent> bullet = ComponentMapper.getFor(BulletComponent.class);
-	public ComponentMapper<HelicopterComponent> helicopter = ComponentMapper.getFor(HelicopterComponent.class);
-	public ComponentMapper<SpriteComponent> sprite = ComponentMapper.getFor(SpriteComponent.class);
-	public ComponentMapper<TeamComponent> team = ComponentMapper.getFor(TeamComponent.class);
-	public ComponentMapper<BrainComponent> brain = ComponentMapper.getFor(BrainComponent.class);
-	public ComponentMapper<Collector> collector = ComponentMapper.getFor(Collector.class);
-	public ComponentMapper<Collectable> collectable = ComponentMapper.getFor(Collectable.class);
-	public ComponentMapper<VehicleComponent> vehicle = ComponentMapper.getFor(VehicleComponent.class);
-	public ComponentMapper<VehicleOperatorComponent> vehicleOperator = ComponentMapper.getFor(VehicleOperatorComponent.class);
-	public ComponentMapper<CarComponent> car = ComponentMapper.getFor(CarComponent.class);
-	public ComponentMapper<ControllerComponent> controller = ComponentMapper.getFor(ControllerComponent.class);
-	public ComponentMapper<LeaderComponent> leader = ComponentMapper.getFor(LeaderComponent.class);
-	public ComponentMapper<ChildComponent> child = ComponentMapper.getFor(ChildComponent.class);	
-	public ComponentMapper<StickyComponent> sticky = ComponentMapper.getFor(StickyComponent.class);	
-	public ComponentMapper<MeleeComponent> melee = ComponentMapper.getFor(MeleeComponent.class);		
-	
+
+	public final ComponentMapper<GunComponent> gun;
+	public final ComponentMapper<JumpComponent> jump;
+	public final ComponentMapper<LedgeHangComponent> ledge;
+	public final ComponentMapper<LookComponent> look;
+	public final ComponentMapper<PhysicsComponent> physics;
+	public final ComponentMapper<PlayerComponent> player;
+	public final ComponentMapper<ThrusterComponent> thrust;
+	public final ComponentMapper<WalkComponent> walk;
+	public final ComponentMapper<HealthComponent> health;
+	public final ComponentMapper<TimeToLiveComponent> timeToLive;
+	public final ComponentMapper<BulletComponent> bullet;
+	public final ComponentMapper<HelicopterComponent> helicopter;
+	public final ComponentMapper<SpriteComponent> sprite;
+	public final ComponentMapper<TeamComponent> team;
+	public final ComponentMapper<BrainComponent> brain;
+	public final ComponentMapper<Collector> collector;
+	public final ComponentMapper<Collectable> collectable;
+	public final ComponentMapper<VehicleComponent> vehicle;
+	public final ComponentMapper<VehicleOperatorComponent> vehicleOperator;
+	public final ComponentMapper<CarComponent> car;
+	public final ComponentMapper<ControllerComponent> controller;
+	public final ComponentMapper<LeaderComponent> leader;
+	public final ComponentMapper<ChildComponent> child;
+	public final ComponentMapper<StickyComponent> sticky;
+	public final ComponentMapper<MeleeComponent> melee;
+
+	public ComponentMappers(World world) {
+		gun = ComponentMapper.getFor(GunComponent.class, world);
+		jump = ComponentMapper.getFor(JumpComponent.class, world);
+		ledge = ComponentMapper.getFor(LedgeHangComponent.class, world);
+		look = ComponentMapper.getFor(LookComponent.class, world);
+		physics = ComponentMapper.getFor(PhysicsComponent.class, world);
+		player = ComponentMapper.getFor(PlayerComponent.class, world);
+		thrust = ComponentMapper.getFor(ThrusterComponent.class, world);
+		walk = ComponentMapper.getFor(WalkComponent.class, world);
+		health = ComponentMapper.getFor(HealthComponent.class, world);
+		timeToLive = ComponentMapper.getFor(TimeToLiveComponent.class, world);
+		bullet = ComponentMapper.getFor(BulletComponent.class, world);
+		helicopter = ComponentMapper.getFor(HelicopterComponent.class, world);
+		sprite = ComponentMapper.getFor(SpriteComponent.class, world);
+		team = ComponentMapper.getFor(TeamComponent.class, world);
+		brain = ComponentMapper.getFor(BrainComponent.class, world);
+		collector = ComponentMapper.getFor(Collector.class, world);
+		collectable = ComponentMapper.getFor(Collectable.class, world);
+		vehicle = ComponentMapper.getFor(VehicleComponent.class, world);
+		vehicleOperator = ComponentMapper.getFor(VehicleOperatorComponent.class, world);
+		car = ComponentMapper.getFor(CarComponent.class, world);
+		controller = ComponentMapper.getFor(ControllerComponent.class, world);
+		leader = ComponentMapper.getFor(LeaderComponent.class, world);
+		child = ComponentMapper.getFor(ChildComponent.class, world);
+		sticky = ComponentMapper.getFor(StickyComponent.class, world);
+		melee = ComponentMapper.getFor(MeleeComponent.class, world);
+	}
 }
 
