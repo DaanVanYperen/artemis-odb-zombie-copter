@@ -1,7 +1,9 @@
 package com.deftwun.zombiecopter;
 
-import com.badlogic.ashley.core.Component;
-import com.badlogic.ashley.core.Entity;
+import com.artemis.Component;
+import com.artemis.Entity;
+import com.artemis.EntityEdit;
+import com.artemis.utils.Bag;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
@@ -27,11 +29,13 @@ public class EntityBuilder{
 	public EntityBuilder(){
 		logger.debug("Initializing");
 	}
+
+	Bag<Component> serializeBag = new Bag<Component>();
 	
 	public String serialize(Entity entity){
 		Json json = new Json();
 		logger.debug("Serialize Entity: " + entity.getId());
-		return json.toJson(entity.getComponents().toArray()); 
+		return json.toJson(entity.getComponents(serializeBag).getData());
 	}
 	
 	public Entity deserialize(String data){
@@ -44,7 +48,7 @@ public class EntityBuilder{
 		}
 		Entity e = App.engine.createEntity();
 		for (Component c : comps){
-			e.add(c);
+			e.edit().add(c);
 		}
 		logger.debug("Entity deserialized: " + e.getId());
 		return e;
@@ -56,7 +60,7 @@ public class EntityBuilder{
 	public Entity build(String name, Vector2 position, Vector2 velocity){return this.build(name, position,velocity, 0);}
 	public Entity build(String name, Vector2 position, Vector2 velocity, float rotation){
 
-		Entity e = null;
+		Entity entity = null;
 		EntityConfig cfg = App.assets.getEntityConfig(name);
 
 		if (cfg == null) {
@@ -67,18 +71,20 @@ public class EntityBuilder{
 		logger.debug(String.format("Building '%s' ; Model=%s",name,cfg.model)); 
 		
 		//Create physics & sprite model
-		if (cfg.model.equals("humanoid")) e = createHumanoid(cfg);
-		else if (cfg.model.equals("car")) e = createCar(cfg);
-		else if (cfg.model.equals("helicopter")) e = createHelicopter(cfg);
-		else if (cfg.model.equals("bullet")) e = createBullet(cfg);
-		else if (cfg.model.equals("ball")) e = createBall(cfg);
+		if (cfg.model.equals("humanoid")) entity = createHumanoid(cfg);
+		else if (cfg.model.equals("car")) entity = createCar(cfg);
+		else if (cfg.model.equals("helicopter")) entity = createHelicopter(cfg);
+		else if (cfg.model.equals("bullet")) entity = createBullet(cfg);
+		else if (cfg.model.equals("ball")) entity = createBall(cfg);
 		else {
 			logger.error("Entity model '" + cfg.model + "' not recognized.");
 			return null;
 		}
-		
+
+		final EntityEdit e = entity.edit();
+
 		//Set physics position, velocity, & rotation 
-		PhysicsComponent physics = App.engine.mappers.physics.get(e);
+		PhysicsComponent physics = App.engine.mappers.physics.get(entity);
 		if (physics != null){
 			physics.collisionEffect = cfg.collisionEffect;
 			physics.setPosition(position);
@@ -123,7 +129,7 @@ public class EntityBuilder{
 		}
 		
 		//Weapons
-		if (cfg.weapon != ""){
+		if (!cfg.weapon.equals("")){
 			WeaponConfig weaponCfg = App.assets.getWeaponConfig(cfg.weapon);
 			if (weaponCfg != null){
 				//Json json = new Json();
@@ -291,9 +297,9 @@ public class EntityBuilder{
 			e.add(ledge);
 		}
 		
-		App.engine.addEntity(e);
-		logger.debug("Entity #" + e.getId() + " finished building.");
-		return e;
+		App.engine.addEntity(entity);
+		logger.debug("Entity #" + entity.id + " finished building.");
+		return entity;
 	}
 
 	public Entity createHumanoid(EntityConfig config){
@@ -391,7 +397,7 @@ public class EntityBuilder{
 			}			
 		}
 
-		e.add(sprite)
+		e.edit().add(sprite)
 		 .add(physics);
 		
 		return e;	
@@ -468,7 +474,7 @@ public class EntityBuilder{
 			sprite.spriteMap.put("body", s);
 		}
 		
-		e.add(sprite)
+		e.edit().add(sprite)
 		 .add(physics);
 		
 		return e;	
@@ -571,8 +577,7 @@ public class EntityBuilder{
 			}			
 		}
 	
-		 e.add(sprite);
-		 e.add(physics);
+		 e.edit().add(sprite).add(physics);
 		
 		return e;	
 	}
@@ -613,8 +618,7 @@ public class EntityBuilder{
 			sprite.spriteMap.put("body",s);
 		}
 		
-		e.add(sprite)
-		 .add(physics);
+		e.edit().add(sprite).add(physics);
 		
 		return e;	
 	}
@@ -654,8 +658,7 @@ public class EntityBuilder{
 			sprite.spriteMap.put("body",s);
 		}
 		
-		e.add(sprite)
-		 .add(physics);
+		e.edit().add(sprite).add(physics);
 		
 		return e;	
 	}
