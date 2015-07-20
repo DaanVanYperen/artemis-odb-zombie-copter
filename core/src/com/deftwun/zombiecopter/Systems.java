@@ -1,9 +1,11 @@
 package com.deftwun.zombiecopter;
 
-import com.badlogic.ashley.core.Engine;
+import com.artemis.Engine;
+import com.artemis.WorldConfiguration;
 import com.deftwun.zombiecopter.systems.*;
 
 public class Systems {
+
 	public CameraSystem camera = new CameraSystem();
 	public MoveSystem move = new MoveSystem();
 	public PhysicsSystem physics = new PhysicsSystem();
@@ -12,43 +14,37 @@ public class Systems {
 	public LifetimeSystem lifetime = new LifetimeSystem();
 	public SpriteRenderSystem spriteRender = new SpriteRenderSystem();
 	public VisionSystem vision = new VisionSystem();
-//	public RangedGround_AI_System rangedGroundAI = new RangedGround_AI_System(); 
-	//public CivilianGround_AI_System civilianGroundAI = new CivilianGround_AI_System();
 	public TeamSystem team = new TeamSystem();
 	public CollectableSystem collectable = new CollectableSystem();
 	public SpawnSystem spawn = new SpawnSystem();
 	public CivilianDropOffSystem dropoff = new CivilianDropOffSystem();
 	public DamageSystem damage = new DamageSystem();
 	public ParticleSystem particle = new ParticleSystem();
-	//public Helicopter_AI_System helicopterAI = new Helicopter_AI_System();
 	public VehicleSystem vehicle = new VehicleSystem();
 	public AgentSystem agent = new AgentSystem();
 	
-	public Systems(Engine engine){
+	public Systems(WorldConfiguration config){
 
-		engine.addSystem(physics);
-		engine.addSystem(agent);
-		engine.addSystem(camera);
-		engine.addSystem(move);
-		engine.addSystem(player);
-		engine.addSystem(weapon);
-		engine.addSystem(lifetime);
-		engine.addSystem(vision);
-		//engine.addSystem(rangedGroundAI);
-		//engine.addSystem(civilianGroundAI);
-		engine.addSystem(spriteRender);
-		engine.addSystem(team);
-		engine.addSystem(collectable);
-		engine.addSystem(spawn);
-		engine.addSystem(damage);
-		engine.addSystem(particle);
-		//engine.addSystem(helicopterAI);
-		engine.addSystem(vehicle);
+		config.setSystem(physics);
+		config.setSystem(agent);
+		config.setSystem(camera);
+		config.setSystem(move);
+		config.setSystem(player);
+		config.setSystem(weapon);
+		config.setSystem(lifetime);
+		config.setSystem(vision);
+		config.setSystem(spriteRender);
+		config.setSystem(team);
+		config.setSystem(collectable);
+		config.setSystem(spawn);
+		config.setSystem(damage);
+		config.setSystem(particle);
+		config.setSystem(vehicle);
 		
-		engine.addEntityListener(camera);
-		engine.addEntityListener(physics);
-		engine.addEntityListener(player);
-		engine.addEntityListener(spriteRender);
+		config.addEntityListener(camera);
+		config.addEntityListener(physics);
+		config.addEntityListener(player);
+		config.addEntityListener(spriteRender);
 
 	}
 }

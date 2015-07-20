@@ -1,10 +1,7 @@
 package com.deftwun.zombiecopter;
 
-import com.badlogic.ashley.core.Component;
-import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.Family;
-import com.badlogic.ashley.core.PooledEngine;
-import com.badlogic.ashley.utils.ImmutableArray;
+import com.artemis.*;
+import com.artemis.utils.ImmutableBag;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Input.TextInputListener;
@@ -20,6 +17,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.WheelJoint;
 import com.badlogic.gdx.physics.box2d.joints.WheelJointDef;
 import com.badlogic.gdx.utils.Logger;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class GameEngine{
 	
@@ -39,17 +37,13 @@ public class GameEngine{
 						entityPoolMaxSize = 50, 
 						componentPoolInitialSize = 1, 
 						componentPoolMaxSize = 100;
-	
-	private final PooledEngine entityEngine =
-				new PooledEngine(entityPoolInitialSize, 
-								 entityPoolMaxSize,
-								 componentPoolInitialSize,
-								 componentPoolMaxSize);
+
+	private final com.artemis.World entityEngine;
 
 	private Level level;
 	public final UserInterface ui = new UserInterface();
 	public final Rectangle entityBounds = new Rectangle(0,0,viewWidth * 3 / PIXELS_PER_METER,viewHeight * 3 / PIXELS_PER_METER);
-	public final ComponentMappers mappers = new ComponentMappers();
+	public final ComponentMappers mappers;
 	public final EntityBuilder factory = new EntityBuilder();
 	public Systems systems;
 	
@@ -58,7 +52,16 @@ public class GameEngine{
 	private final DebugRenderer debugRenderer = new DebugRenderer();
 	private float debugEntitySpawnAcc = 0,
 				  debugEntitySpawnRate = .1f;
-	
+
+	public GameEngine() {
+		logger.debug("Initializing");
+		final WorldConfiguration config = new WorldConfiguration();
+		systems = new Systems(config);
+		entityEngine = new com.artemis.World(config);
+		mappers = new ComponentMappers(entityEngine);
+		Gdx.input.setInputProcessor(systems.player);
+	}
+
 	private class DebugConsole implements TextInputListener{
 		public String myText = "";
 		
@@ -88,12 +91,6 @@ public class GameEngine{
 	};
 	*/
 	
-	
-	public void initialize(){
-		logger.debug("Initializing");
-		systems = new Systems(entityEngine);
-		Gdx.input.setInputProcessor(systems.player);
-	}
 	
 	public void loadLevel(String fileName){
 		logger.info("Loading level " + fileName);
@@ -228,7 +225,8 @@ public class GameEngine{
 		}
 		else timeAccumulator += deltaTime;
 		while (timeAccumulator >= timestep){
-			entityEngine.update(timestep * timeModifier);
+			entityEngine.delta = timestep * timeModifier;
+			entityEngine.process();
 			timeAccumulator -= timestep;
 			debugRenderer.update();
 			
@@ -257,35 +255,34 @@ public class GameEngine{
 	
 	public void addEntity(Entity e){
 		logger.debug("Entity Added " + e.getId());
-		entityEngine.addEntity(e);
 	}
 	
-	public Entity getEntity(long id){
+	public Entity getEntity(int id){
 		return entityEngine.getEntity(id);
 	}
 	
 	public int getEntityCount(){
-		return entityEngine.getEntities().size();
+		final EntityManager entityManager = entityEngine.getEntityManager();
+		return (int)(entityManager.getTotalCreated() - entityManager.getTotalDeleted());
 	}
 	
-	public ImmutableArray<Entity> getEntitiesFor(Family family){
-		return entityEngine.getEntitiesFor(family);
+	public ImmutableBag<Entity> getEntitiesFor(Aspect family){
+		throw new NotImplementedException();
 	}
 	
 	public void removeEntity(Entity e){
 		logger.debug("Entity Removed: " + e.getId());
-		entityEngine.removeEntity(e);
+		e.deleteFromWorld();
 	}
 	
 	public void removeAllEntities(){
 		logger.debug("Removing all entities");
-		entityEngine.removeAllEntities();
+		throw new NotImplementedException();
 	}
 			
 	public void reset(){
 		logger.debug("Reset");
 		removeAllEntities();
-		entityEngine.clearPools();
 		if (level != null) level.clear();
 		level = null;
 	}
@@ -295,7 +292,11 @@ public class GameEngine{
 	}
 	
 	public <T extends Component> T createComponent (Class<T> componentType) {
-		return entityEngine.createComponent(componentType);
+		try {
+			return componentType.newInstance();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 	public Level getLevel(){

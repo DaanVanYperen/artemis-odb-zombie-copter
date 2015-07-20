@@ -16,7 +16,6 @@ public class App extends Game {
 		Gdx.app.setLogLevel(Logger.DEBUG);	
 		assets = new Assets();
 		engine = new GameEngine();
-		engine.initialize();
 		gameScreen = new GameScreen();
 		setScreen(gameScreen);
 	}
