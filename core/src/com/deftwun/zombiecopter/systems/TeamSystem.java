@@ -1,13 +1,13 @@
 package com.deftwun.zombiecopter.systems;
 
-import com.badlogic.ashley.core.EntitySystem;
+import com.artemis.Manager;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.deftwun.zombiecopter.components.TeamComponent.Team;
 
 
 //This class only serves to determine enemies of a given team.
-public class TeamSystem extends EntitySystem {
+public class TeamSystem extends Manager {
 	private ObjectMap<Team,Array<Team>> enemyMap;
 	
 	public Array<Team> getEnemies(Team t){
