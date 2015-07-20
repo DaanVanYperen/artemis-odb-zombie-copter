@@ -1,21 +1,16 @@
 package com.deftwun.zombiecopter.systems;
 
-import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.Family;
-import com.badlogic.ashley.systems.IteratingSystem;
+import com.artemis.Aspect;
+import com.artemis.Entity;
+import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Logger;
-import com.deftwun.zombiecopter.ComponentMappers;
 import com.deftwun.zombiecopter.App;
-import com.deftwun.zombiecopter.components.ChildComponent;
-import com.deftwun.zombiecopter.components.ControllerComponent;
-import com.deftwun.zombiecopter.components.GunComponent;
-import com.deftwun.zombiecopter.components.MeleeComponent;
-import com.deftwun.zombiecopter.components.PhysicsComponent;
-import com.deftwun.zombiecopter.components.TimeToLiveComponent;
+import com.deftwun.zombiecopter.ComponentMappers;
+import com.deftwun.zombiecopter.components.*;
 
-public class WeaponSystem extends IteratingSystem {
+public class WeaponSystem extends EntityProcessingSystem {
 	
 	private Logger logger = new Logger("WeaponSystem",Logger.INFO);	
 	private Vector2 pos = new Vector2(), 
@@ -23,12 +18,12 @@ public class WeaponSystem extends IteratingSystem {
 	
 	@SuppressWarnings("unchecked")
 	public WeaponSystem(){
-		super(Family.one(GunComponent.class,MeleeComponent.class).get());	
+		super(Aspect.one(GunComponent.class, MeleeComponent.class));
 		logger.debug("initializing");
 	}
 	
 	@Override
-	protected void processEntity(Entity entity, float deltaTime) {
+	protected void process(Entity entity) {
 		
 		ComponentMappers mappers = App.engine.mappers;
 		PhysicsComponent physics = mappers.physics.get(entity);
@@ -39,7 +34,7 @@ public class WeaponSystem extends IteratingSystem {
 		//Shoot Gun
 		if (gun != null){
 			gun.triggerPulled = controller.attack;
-			gun.time += deltaTime;
+			gun.time += world.delta;
 			if (gun.triggerPulled && gun.time >= gun.cooldown){
 				logger.debug(String.format("Entity %s is firing",entity.getId()));
 				
@@ -57,8 +52,7 @@ public class WeaponSystem extends IteratingSystem {
 					ChildComponent child = App.engine.createComponent(ChildComponent.class);
 					child.parentEntity = entity;
 				
-					bulletEntity.add(ttl);
-					bulletEntity.add(child);
+					bulletEntity.edit().add(ttl).add(child);
 					gun.time = 0;
 				}
 			}
@@ -67,7 +61,7 @@ public class WeaponSystem extends IteratingSystem {
 		//Melee Attack
 		if (melee != null){
 			melee.triggerPulled = controller.attack; 
-			melee.time += deltaTime;
+			melee.time += world.delta;;
 			String status = String.format("Melee.target = %b\n TriggerPulled = %b\n Cooled = %b",
 										   melee.target != null,melee.triggerPulled,melee.time >= melee.coolDown);
 			logger.debug(status);
