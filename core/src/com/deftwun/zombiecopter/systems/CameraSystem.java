@@ -1,8 +1,7 @@
 package com.deftwun.zombiecopter.systems;
 
-import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.EntityListener;
-import com.badlogic.ashley.core.EntitySystem;
+import com.artemis.Entity;
+import com.artemis.Manager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Rectangle;
@@ -12,7 +11,7 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.deftwun.zombiecopter.App;
 import com.deftwun.zombiecopter.components.PhysicsComponent;
 
-public class CameraSystem extends EntitySystem implements EntityListener{
+public class CameraSystem extends Manager {
 
 	private Vector2 mouseVector = new Vector2();
 	private int LOG_LEVEL = Logger.INFO;
@@ -23,7 +22,7 @@ public class CameraSystem extends EntitySystem implements EntityListener{
 	private Entity targetObject;
 	private PhysicsComponent targetPhysics;
 	private Rectangle camRect;
-	
+
 	public CameraSystem(){
 		float viewWidth = App.engine.viewWidth,
 			  viewHeight = App.engine.viewHeight;
@@ -32,8 +31,7 @@ public class CameraSystem extends EntitySystem implements EntityListener{
 		logger.debug("ViewSize is " + viewWidth + "x" + viewHeight);
 		camera = new OrthographicCamera();		
 		viewport = new ExtendViewport(viewWidth,viewHeight,0,0,camera);
-		this.setProcessing(false);
-		
+
 		camera.zoom = 1.1f;
 		/*
 		camera.position.x = viewport.getWorldWidth() / 2;
@@ -100,16 +98,9 @@ public class CameraSystem extends EntitySystem implements EntityListener{
 	}
 
 	@Override
-	public void entityAdded(Entity entity) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void entityRemoved(Entity entity) {
-		if (entity == targetObject){
+	public void deleted(Entity e) {
+		if (e == targetObject){
 			targetPhysics = null;
 		}
-		
 	}
 }

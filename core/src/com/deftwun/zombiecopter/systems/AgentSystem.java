@@ -1,11 +1,10 @@
 package com.deftwun.zombiecopter.systems;
 
+import com.artemis.Aspect;
+import com.artemis.systems.EntityProcessingSystem;
 import net.dermetfan.gdx.physics.box2d.Box2DUtils;
 
-import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.EntitySystem;
-import com.badlogic.ashley.core.Family;
-import com.badlogic.ashley.utils.ImmutableArray;
+import com.artemis.Entity;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
@@ -25,27 +24,30 @@ import com.deftwun.zombiecopter.components.TeamComponent.Team;
 
 
 //This AI system tries to dynamically determine how an entity should behave based on the components it contains
-public class AgentSystem extends EntitySystem{	
+public class AgentSystem extends EntityProcessingSystem {
 	private Logger logger = new Logger("AgentSystem",Logger.INFO);
 
 	private RayCast rayCast = new RayCast();
-	private Family agents = Family.all(BrainComponent.class,ControllerComponent.class, PhysicsComponent.class).get();
-	
-	public AgentSystem(){
+
+	public AgentSystem()
+	{
+		super(Aspect.all(BrainComponent.class, ControllerComponent.class, PhysicsComponent.class));
 		logger.debug("Initializing");
 	}
-	
-	public void update(float deltaTime){
-		ImmutableArray<Entity> entities = App.engine.getEntitiesFor(agents);					
+
+	@Override
+	protected void process(Entity e) {
 		ComponentMappers mappers = App.engine.mappers;
-		for (Entity e : entities){
-			BrainComponent brain = mappers.brain.get(e);
-			brain.time += deltaTime;
-			if (brain.time >= brain.thinkTime){
-				brain.time = 0;
-				processEntity(e,deltaTime);
-			}
+		BrainComponent brain = mappers.brain.get(e);
+		brain.time += world.delta;
+		if (brain.time >= brain.thinkTime){
+			brain.time = 0;
+			processEntity(e,world.delta);
 		}
+	}
+
+
+	public void update(float deltaTime){
 	}
 	
 	private void processEntity(Entity e,float deltaTime){
