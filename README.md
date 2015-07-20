@@ -1,8 +1,8 @@
-# Port of ZombieCopter
+# artemis-odb-zombie-copter
 
-Fork of [ZombieCopter](https://github.com/Deftwun/ZombieCopter). A physics based game written by [Deftwun](http://github.com/Deftwun).
+Fork of a physics based game written by [Deftwun](http://github.com/Deftwun) named [ZombieCopter](https://github.com/Deftwun/ZombieCopter). Ported to artemis-odb.
 
-Example port from [Ashley](https://github.com/libgdx/ashley) to [Artemis-odb](http://github.com/junkdog/artemis-odb)!
+Demonstrates porting your [Ashley](https://github.com/libgdx/ashley) game to [Artemis-odb](http://github.com/junkdog/artemis-odb)!
 
 ###Screenshots
 
