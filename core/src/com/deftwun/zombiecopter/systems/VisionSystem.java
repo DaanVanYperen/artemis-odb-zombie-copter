@@ -1,8 +1,8 @@
 package com.deftwun.zombiecopter.systems;
- 
-import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.Family;
-import com.badlogic.ashley.systems.IteratingSystem;
+
+import com.artemis.Aspect;
+import com.artemis.Entity;
+import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Logger;
@@ -12,20 +12,20 @@ import com.deftwun.zombiecopter.components.LookComponent;
 import com.deftwun.zombiecopter.components.PhysicsComponent;
 import com.deftwun.zombiecopter.components.SpriteComponent;
 
-public class VisionSystem extends IteratingSystem{
+public class VisionSystem extends EntityProcessingSystem{
      
     private Logger logger;
     private int LOG_LEVEL = Logger.INFO;
 	
     @SuppressWarnings("unchecked")
     public VisionSystem(){
-        super(Family.all(PhysicsComponent.class,LookComponent.class).get());    
+        super(Aspect.all(PhysicsComponent.class, LookComponent.class));
         logger = new Logger("VisionSystem",LOG_LEVEL);
         logger.debug("initializing");
     }
      
     @Override
-    protected void processEntity(Entity entity, float deltaTime) {
+    protected void process(Entity entity) {
         PhysicsComponent phys = App.engine.mappers.physics.get(entity);
 		ControllerComponent controller = App.engine.mappers.controller.get(entity);
         LookComponent look = App.engine.mappers.look.get(entity);
@@ -36,7 +36,7 @@ public class VisionSystem extends IteratingSystem{
         		look.reverseSweep = !look.reverseSweep;
         		look.sweepAcc = 0;
         	}
-        	float rate = look.sweepRate * deltaTime;
+        	float rate = look.sweepRate * world.delta;
         	if (look.reverseSweep) look.direction.rotate(rate * -1);
         	else look.direction.rotate(rate);
         	look.sweepAcc += rate;
