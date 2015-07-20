@@ -1,6 +1,7 @@
 package com.deftwun.zombiecopter.components;
 
-import com.badlogic.ashley.core.Component;
+import com.artemis.Component;
+import com.artemis.PooledComponent;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.glutils.FileTextureData;
@@ -12,7 +13,7 @@ import com.badlogic.gdx.utils.Pool.Poolable;
 import com.deftwun.zombiecopter.App;
 import com.deftwun.zombiecopter.SpriteLayer;
 
-public class SpriteComponent extends Component implements Poolable,Serializable{
+public class SpriteComponent extends PooledComponent implements Serializable{
 	
 	private static class Model{
 				

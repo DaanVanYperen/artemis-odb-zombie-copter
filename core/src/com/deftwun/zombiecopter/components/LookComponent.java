@@ -1,11 +1,12 @@
 package com.deftwun.zombiecopter.components;
  
-import com.badlogic.ashley.core.Component;
+import com.artemis.Component;
+import com.artemis.PooledComponent;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool.Poolable;
  
-public class LookComponent extends Component implements Poolable{
+public class LookComponent  extends PooledComponent {
 	public float sweepRate = 10;
 	public float sweepAngle = 30;
 	public float sweepAcc = 0;

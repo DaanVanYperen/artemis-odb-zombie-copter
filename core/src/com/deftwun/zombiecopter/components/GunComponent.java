@@ -1,10 +1,11 @@
 package com.deftwun.zombiecopter.components;
 
-import com.badlogic.ashley.core.Component;
+import com.artemis.Component;
+import com.artemis.PooledComponent;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool.Poolable;
 
-public class GunComponent extends Component implements Poolable{
+public class GunComponent  extends PooledComponent {
 	
 	//public ObjectMap<String,Gun> availableGuns = new ObjectMap<String,Gun>();
 	//public String selectedGun;	

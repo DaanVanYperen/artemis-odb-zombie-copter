@@ -1,9 +1,10 @@
 package com.deftwun.zombiecopter.components;
 
-import com.badlogic.ashley.core.Component;
+import com.artemis.Component;
+import com.artemis.PooledComponent;
 import com.badlogic.gdx.utils.Pool.Poolable;
 
-public class HealthComponent extends Component implements Poolable{
+public class HealthComponent extends PooledComponent {
 	public float max = 10,
 				 value = 10,
 				 collisionDamageThreshold = 1f,

@@ -1,9 +1,10 @@
 package com.deftwun.zombiecopter.components;
 
-import com.badlogic.ashley.core.Component;
+import com.artemis.Component;
+import com.artemis.PooledComponent;
 import com.badlogic.gdx.utils.Pool.Poolable;
 
-public class VehicleComponent extends Component implements Poolable {
+public class VehicleComponent extends PooledComponent {
 
 	public String occupantData = "";
 	public float time = 0,

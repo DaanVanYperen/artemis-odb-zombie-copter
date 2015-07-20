@@ -1,11 +1,12 @@
 package com.deftwun.zombiecopter.components;
 
-import com.badlogic.ashley.core.Component;
-import com.badlogic.ashley.core.Entity;
+import com.artemis.Component;
+import com.artemis.Entity;
+import com.artemis.PooledComponent;
 import com.badlogic.gdx.utils.Pool.Poolable;
 
 //Creates a weld joint when the defined fixture collides with another 
-public class MeleeComponent extends Component implements Poolable{
+public class MeleeComponent  extends PooledComponent {
 	public float damage, 
 				 range,
 				 time,

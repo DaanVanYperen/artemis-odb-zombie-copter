@@ -1,13 +1,15 @@
 package com.deftwun.zombiecopter.components;
 
-import com.badlogic.ashley.core.Component;
-import com.badlogic.ashley.core.Entity;
+import com.artemis.Component;
+import com.artemis.Entity;
+import com.artemis.PooledComponent;
+import com.artemis.annotations.PooledWeaver;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool.Poolable;
 import com.deftwun.zombiecopter.AI.BrainState;
 
-public class BrainComponent extends Component implements Poolable{
-	
+public class BrainComponent extends PooledComponent {
+
 	public float time = 0, thinkTime = 1, 
 				 desiredRange = 0,
 				 rangeTolerance = 1; 

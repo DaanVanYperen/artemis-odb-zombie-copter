@@ -1,7 +1,8 @@
 package com.deftwun.zombiecopter.components;
 
-import com.badlogic.ashley.core.Component;
-import com.badlogic.ashley.core.Entity;
+import com.artemis.Component;
+import com.artemis.Entity;
+import com.artemis.PooledComponent;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Filter;
@@ -26,7 +27,7 @@ import com.deftwun.zombiecopter.box2dJson.PhysicsSceneModel;
 	Bodies, fixtures, and joints. 
 	
 */
-public class PhysicsComponent extends Component implements Serializable, Poolable{
+public class PhysicsComponent extends PooledComponent implements Serializable{
 
 	public Entity ownerEntity = null;
 	public String collisionEffect = "";

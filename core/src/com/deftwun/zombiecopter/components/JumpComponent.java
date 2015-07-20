@@ -1,9 +1,10 @@
 package com.deftwun.zombiecopter.components;
 
-import com.badlogic.ashley.core.Component;
+import com.artemis.Component;
+import com.artemis.PooledComponent;
 import com.badlogic.gdx.utils.Pool.Poolable;
 
-public class JumpComponent extends Component implements Poolable{
+public class JumpComponent extends PooledComponent {
 	public float power,
 				 coolDown,
 				 timeSinceJump;
