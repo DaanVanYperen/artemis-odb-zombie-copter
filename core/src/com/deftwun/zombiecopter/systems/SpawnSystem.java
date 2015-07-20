@@ -1,7 +1,6 @@
 package com.deftwun.zombiecopter.systems;
 
-import com.badlogic.ashley.core.Engine;
-import com.badlogic.ashley.core.EntitySystem;
+import com.artemis.BaseSystem;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
@@ -10,7 +9,7 @@ import com.badlogic.gdx.utils.Array;
 import com.deftwun.zombiecopter.App;
 import com.deftwun.zombiecopter.SpawnZone;
 
-public class SpawnSystem extends EntitySystem {
+public class SpawnSystem extends BaseSystem {
 
 	private Rectangle camRect,
 					  boundsRect = new Rectangle(App.engine.entityBounds),
@@ -28,18 +27,8 @@ public class SpawnSystem extends EntitySystem {
 		points.add(point);
 	}
 
-	public SpawnSystem(){
-		this.setProcessing(true);
-	}
-	
 	@Override
-	public void removedFromEngine(Engine engine) {
-		points.clear();
-		deadPoints.clear();
-	}
-
-	@Override
-	public void update(float deltaTime) {
+	public void processSystem() {
 		if (App.engine.getEntityCount() > maxEntities) return;
 		
 		
@@ -47,7 +36,7 @@ public class SpawnSystem extends EntitySystem {
 		boundsRect.setCenter(camRect.getCenter(cameraCenter));
 		
 		for (SpawnZone z : points){
-			z.time += deltaTime;
+			z.time += world.delta;
 			
 			//Spawn new entity
 			if (z.time > z.delay && z.count < z.maximum){
