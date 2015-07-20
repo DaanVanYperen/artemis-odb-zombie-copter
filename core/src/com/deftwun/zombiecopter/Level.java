@@ -1,7 +1,7 @@
 package com.deftwun.zombiecopter;
 
 import net.dermetfan.gdx.physics.box2d.Box2DMapObjectParser;
-import com.badlogic.ashley.core.Entity;
+import com.artemis.Entity;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.Map;
@@ -115,7 +115,7 @@ public class Level {
 			physics.addBody(entry.key,entry.value);
 		}
 		physics.setFilter(CollisionBits.Terrain,CollisionBits.Mask_Terrain);
-		entity.add(physics);
+		entity.edit().add(physics);
 		
 		App.engine.addEntity(entity);
 		
