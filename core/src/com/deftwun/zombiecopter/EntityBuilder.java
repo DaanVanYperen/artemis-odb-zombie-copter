@@ -4,6 +4,7 @@ import com.artemis.Component;
 import com.artemis.Entity;
 import com.artemis.EntityEdit;
 import com.artemis.utils.Bag;
+import com.artemis.utils.reflect.ClassReflection;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
@@ -44,22 +45,31 @@ public class EntityBuilder{
 	}
 	
 	public Entity deserialize(String data){
-		Json json = new Json();
+		final Entity e = App.engine.createEntity();
+
+		Json json = new Json() {
+			protected Object newInstance (Class type) {
+
+				// Components are managed by ECS.
+				if ( ClassReflection.isAssignableFrom(Component.class, type))
+				{
+					return e.edit().create(type);
+				}
+
+				return super.newInstance(type);
+			}
+		};
 		logger.debug("Deserialize Entity");
-		Array<Component> comps = json.fromJson(null,data);
+		Array<Component> comps = json.fromJson(null, data);
 		if (comps == null) {
 			logger.error("Deserialization failed: " +  data);
 			return null;
 		}
-		Entity e = App.engine.createEntity();
-		for (Component c : comps){
-			e.edit().add(c);
-		}
 		logger.debug("Entity deserialized: " + e.getId());
 		return e;
 	}
-	
-	
+
+
 	public Entity build(String name){return this.build(name, tmpVector.set(0,0),tmpVector,0);}
 	public Entity build(String name, Vector2 position){return this.build(name, position,tmpVector.set(0,0), 0);}
 	public Entity build(String name, Vector2 position, Vector2 velocity){return this.build(name, position,velocity, 0);}

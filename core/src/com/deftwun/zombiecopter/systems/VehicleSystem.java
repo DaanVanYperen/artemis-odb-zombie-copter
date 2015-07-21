@@ -93,9 +93,7 @@ public class VehicleSystem extends EntitySystem {
 			occupantPhys.setLinearVelocity(physics.getLinearVelocity());
 		}
 		engine.addEntity(occupant);
-
-		Entity notFlyOccupant = world.getEntity(occupant.id);
-		App.engine.systems.player.setPlayer(notFlyOccupant);
+		App.engine.systems.player.setPlayer(occupant);
 
 		vehicle.occupantData = "";
 	}
