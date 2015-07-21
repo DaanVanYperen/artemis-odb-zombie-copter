@@ -1,18 +1,15 @@
 package com.deftwun.zombiecopter;
 
 import com.artemis.*;
-import com.artemis.utils.ImmutableBag;
+import com.artemis.utils.IntBag;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Input.TextInputListener;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.WheelJoint;
 import com.badlogic.gdx.physics.box2d.joints.WheelJointDef;
@@ -266,8 +263,8 @@ public class GameEngine{
 		return (int)(entityManager.getTotalCreated() - entityManager.getTotalDeleted());
 	}
 	
-	public ImmutableBag<Entity> getEntitiesFor(Aspect family){
-		throw new NotImplementedException();
+	public IntBag getEntitiesFor(Aspect.Builder builder){
+		return entityEngine.getManager(AspectSubscriptionManager.class).get(builder).getEntities();
 	}
 	
 	public void removeEntity(Entity e){
