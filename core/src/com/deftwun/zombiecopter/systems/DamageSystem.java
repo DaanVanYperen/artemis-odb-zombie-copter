@@ -64,8 +64,9 @@ public class DamageSystem extends EntityProcessingSystem{
 				physics.getPrimaryBody().setFixedRotation(false);
 			 
 				//Remove all components except these ones
-				for (Object o : entity.getComponents(componentsTmp).getData()){
-					final Component c = (Component)o;
+				final Bag<Component> components = entity.getComponents(componentsTmp);
+				for (int i = components.size()-1; i > 0; i--) {
+					final Component c = components.get(i);
 					if (!(c instanceof PhysicsComponent) &&
 						!(c instanceof TimeToLiveComponent) &&
 						!(c instanceof SpriteComponent) && 
