@@ -9,7 +9,7 @@ import java.io.File;
 //When run as a java application, this class will scan the assets folder and create an 
 // assetmanifest file that is used when loading assets. (need this when you want assets bundled with jar file)
 
-public class CreateManifest2 {
+public class CreateManifest {
 
 	public static void main(String[] arg){
 		
