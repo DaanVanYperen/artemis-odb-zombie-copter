@@ -1,48 +1,31 @@
 package com.deftwun.zombiecopter.systems;
 
-import com.badlogic.ashley.core.Component;
-import com.badlogic.ashley.core.Engine;
-import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.Family;
-import com.badlogic.ashley.systems.IteratingSystem;
+import com.artemis.Aspect;
+import com.artemis.Component;
+import com.artemis.Entity;
+import com.artemis.systems.EntityProcessingSystem;
+import com.artemis.utils.Bag;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Logger;
-import com.deftwun.zombiecopter.CollisionBits;
 import com.deftwun.zombiecopter.App;
+import com.deftwun.zombiecopter.CollisionBits;
 import com.deftwun.zombiecopter.ComponentMappers;
-import com.deftwun.zombiecopter.components.BulletComponent;
-import com.deftwun.zombiecopter.components.ChildComponent;
-import com.deftwun.zombiecopter.components.HealthComponent;
-import com.deftwun.zombiecopter.components.LookComponent;
-import com.deftwun.zombiecopter.components.PhysicsComponent;
-import com.deftwun.zombiecopter.components.PlayerComponent;
-import com.deftwun.zombiecopter.components.SpriteComponent;
-import com.deftwun.zombiecopter.components.TimeToLiveComponent;
+import com.deftwun.zombiecopter.components.*;
 
 
-public class DamageSystem extends IteratingSystem{
+public class DamageSystem extends EntityProcessingSystem{
 
 	private Logger logger = new Logger("DamageSystem", Logger.INFO);
 	private final float deadEntityTimeLimit = 5;
-	
+
+	private Bag<Component> componentsTmp = new Bag<Component>();
+
 	@SuppressWarnings("unchecked")
 	public DamageSystem() {
-		super(Family.all(BulletComponent.class).get());
+		super(Aspect.all(BulletComponent.class));
 		logger.debug("initializing");
-	}
-	
-	@Override
-	public void addedToEngine(Engine engine) {
-		super.addedToEngine(engine);
-		logger.debug("added to engine");
-	}
-
-
-	@Override
-	public void update(float deltaTime) {
-		super.update(deltaTime);
 	}
 
 	public void death(Entity entity){
@@ -51,7 +34,7 @@ public class DamageSystem extends IteratingSystem{
         PhysicsComponent physics = mappers.physics.get(entity);
         HealthComponent health = mappers.health.get(entity);	
 
-		if (health.isDead == false){
+		if (!health.isDead){
 			health.isDead = true;
 			logger.debug("Entity #" + entity.getId() + " has died.");
 			 
@@ -81,7 +64,8 @@ public class DamageSystem extends IteratingSystem{
 				physics.getPrimaryBody().setFixedRotation(false);
 			 
 				//Remove all components except these ones
-				for (Component c : entity.getComponents()){
+				for (Object o : entity.getComponents(componentsTmp).getData()){
+					final Component c = (Component)o;
 					if (!(c instanceof PhysicsComponent) &&
 						!(c instanceof TimeToLiveComponent) &&
 						!(c instanceof SpriteComponent) && 
@@ -89,7 +73,7 @@ public class DamageSystem extends IteratingSystem{
 						!(c instanceof PlayerComponent) && 
 						!(c instanceof LookComponent))
 					{ 
-						entity.remove(c.getClass());
+						entity.edit().remove(c);
 					}
 				}
 				
@@ -98,7 +82,7 @@ public class DamageSystem extends IteratingSystem{
 				if (ttl == null) ttl = App.engine.createComponent(TimeToLiveComponent.class);
 				ttl.time = 0;
 				ttl.timeLimit = deadEntityTimeLimit;
-				entity.add(ttl);
+				entity.edit().add(ttl);
 				logger.debug("  ..countdown to removal (timeToLive) = " + ttl.timeLimit + " seconds.");
 			}
 		}
@@ -139,7 +123,7 @@ public class DamageSystem extends IteratingSystem{
 	}	
 	
 	@Override
-	protected void processEntity(Entity entity, float deltaTime) {
+	protected void process(Entity entity) {
 		
 		PhysicsComponent physics = App.engine.mappers.physics.get(entity);
 		BulletComponent bullet = App.engine.mappers.bullet.get(entity);
@@ -159,8 +143,8 @@ public class DamageSystem extends IteratingSystem{
 		
 		//disable bullet after colliding with anything
 		if (physics.getCollisionNormal() > 0) {
-			physics.setFilter(CollisionBits.Effects,CollisionBits.Mask_Effects);
-			entity.remove(BulletComponent.class);
+			physics.setFilter(CollisionBits.Effects, CollisionBits.Mask_Effects);
+			entity.edit().remove(BulletComponent.class);
 			//logger.debug("Entity #" + entity.getId() + ": damage disabled");
 		}	
 	}
