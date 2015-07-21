@@ -1,6 +1,6 @@
 package com.deftwun.zombiecopter.systems;
 
-import com.badlogic.ashley.core.EntitySystem;
+import com.artemis.BaseSystem;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -9,7 +9,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Logger;
 import com.deftwun.zombiecopter.App;
 
-public class ParticleSystem extends EntitySystem {
+public class ParticleSystem extends BaseSystem {
 	private int LOG_LEVEL = Logger.INFO;
 	private Logger logger = new Logger("ParticleSystem",LOG_LEVEL);
 	
@@ -43,8 +43,7 @@ public class ParticleSystem extends EntitySystem {
 	}
 	
 	@Override
-	public void update(float deltaTime) {
-		super.update(deltaTime);
+	public void processSystem() {
 		for (ParticleEffect e : finishedEffects){
 			effects.removeValue(e, true);
 		}
