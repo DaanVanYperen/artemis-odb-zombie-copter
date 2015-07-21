@@ -126,7 +126,7 @@ public class PhysicsSystem extends EntityProcessingSystem implements ContactList
 		*/
 
 	}
-	
+
     @Override
     public void beginContact(Contact contact) { 
     	
@@ -142,10 +142,12 @@ public class PhysicsSystem extends EntityProcessingSystem implements ContactList
 		logger.debug("Begin contact between Entity #" + physA.ownerEntity.getId() + " & #" + physB.ownerEntity.getId());
 		
 		if (!fixA.isSensor() && !fixB.isSensor()){
-			if (physA.collisionEffect != "")
-				App.engine.systems.particle.addEffect(physA.collisionEffect,physA.getPosition(),physB.getRotation());
-			if (physB.collisionEffect != "")
-				App.engine.systems.particle.addEffect(physB.collisionEffect,physB.getPosition(),physB.getRotation());
+			if (!physA.collisionEffect.isEmpty()) {
+				App.engine.systems.particle.addEffect(physA.collisionEffect, physA.getPosition(), physB.getRotation());
+			}
+			if (!physB.collisionEffect.isEmpty()) {
+				App.engine.systems.particle.addEffect(physB.collisionEffect, physB.getPosition(), physB.getRotation());
+			}
 		}
 		fixture_fixtures_map.get(fixA).add(fixB);		
 		fixture_fixtures_map.get(fixB).add(fixA);
