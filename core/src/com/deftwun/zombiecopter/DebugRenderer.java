@@ -92,7 +92,7 @@ public class DebugRenderer{
 	}
 	
 	private void renderPhysics(){
-		World w = App.engine.systems.physics.world;
+		World w = App.engine.systems.physics.physicsWorld;
         physicsRenderer.render(w, scaledProjection);
 	}
 

@@ -1,18 +1,10 @@
 package com.deftwun.zombiecopter.systems;
 
-import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.EntityListener;
-import com.badlogic.ashley.core.Family;
-import com.badlogic.ashley.systems.IteratingSystem;
+import com.artemis.Aspect;
+import com.artemis.Entity;
+import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.Contact;
-import com.badlogic.gdx.physics.box2d.ContactImpulse;
-import com.badlogic.gdx.physics.box2d.ContactListener;
-import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.Joint;
-import com.badlogic.gdx.physics.box2d.Manifold;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.joints.WeldJointDef;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Logger;
@@ -23,9 +15,9 @@ import com.deftwun.zombiecopter.components.HealthComponent;
 import com.deftwun.zombiecopter.components.PhysicsComponent;
 import com.deftwun.zombiecopter.components.StickyComponent;
 
-public class PhysicsSystem extends IteratingSystem implements ContactListener, EntityListener, PhysicsSceneListener {
+public class PhysicsSystem extends EntityProcessingSystem implements ContactListener, PhysicsSceneListener {
  	
-	public World world;
+	public World physicsWorld;
 	private final float gravity = -14;
 
 	private Logger logger = new Logger("PhysicsSystem",Logger.INFO);
@@ -70,20 +62,19 @@ public class PhysicsSystem extends IteratingSystem implements ContactListener, E
 	
 	@SuppressWarnings("unchecked")
 	public PhysicsSystem(){
-		super(Family.all(PhysicsComponent.class).get());
+		super(Aspect.all(PhysicsComponent.class));
 		logger.debug("initializing");
-		world = new World(new Vector2(0,gravity),true);
-		world.setContactListener(this);
+		physicsWorld = new World(new Vector2(0,gravity),true);
+		physicsWorld.setContactListener(this);
 	}
-	
+
 	@Override
-	public void update(float deltaTime){
-		super.update(deltaTime);
-		world.step(deltaTime,4,4);	
+	protected void begin() {
+		physicsWorld.step(super.world.delta, 4, 4);
 	}
-		
+
 	@Override
-	protected void processEntity(Entity entity, float deltaTime) {
+	protected void process(Entity entity) {
 		PhysicsComponent physics = App.engine.mappers.physics.get(entity);
 		HealthComponent health = App.engine.mappers.health.get(entity);
 		StickyComponent sticky = App.engine.mappers.sticky.get(entity);
@@ -105,7 +96,7 @@ public class PhysicsSystem extends IteratingSystem implements ContactListener, E
 						Body b1 = f.getBody(),
 						     b2 = stickyFixture.getBody();
 						jd.initialize(b1,b2,b2.getWorldCenter());
-						world.createJoint(jd);
+						physicsWorld.createJoint(jd);
 						sticky.enabled = false;
 						break;
 					}
@@ -236,8 +227,10 @@ public class PhysicsSystem extends IteratingSystem implements ContactListener, E
         physB.addCollisionNormal(impulse.getNormalImpulses()[0]);
     }
 
+
+
 	@Override
-	public void entityAdded(Entity entity) {
+	public void inserted(Entity entity) {
 		logger.debug("Entity added: " + entity.getId());
 		PhysicsComponent physics = App.engine.mappers.physics.get(entity);
 		if (physics == null) return;
@@ -246,7 +239,7 @@ public class PhysicsSystem extends IteratingSystem implements ContactListener, E
 	}
 
 	@Override
-	public void entityRemoved(Entity entity) {
+	public void removed(Entity entity) {
 		logger.debug("Entity removed: " + entity.getId());
 		PhysicsComponent physics = App.engine.mappers.physics.get(entity);
 		if (physics == null) return;

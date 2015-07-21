@@ -1,14 +1,9 @@
 package com.deftwun.zombiecopter;
 
-import net.dermetfan.gdx.physics.box2d.Box2DMapObjectParser;
 import com.artemis.Entity;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.maps.Map;
-import com.badlogic.gdx.maps.MapLayer;
-import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.MapObjects;
-import com.badlogic.gdx.maps.MapProperties;
+import com.badlogic.gdx.maps.*;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -23,6 +18,7 @@ import com.badlogic.gdx.utils.Logger;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.deftwun.zombiecopter.components.PhysicsComponent;
 import com.deftwun.zombiecopter.systems.SpawnSystem;
+import net.dermetfan.gdx.physics.box2d.Box2DMapObjectParser;
 
 public class Level {
 	private Logger logger = new Logger("Level",Logger.INFO);
@@ -97,7 +93,7 @@ public class Level {
 			return;
 		}
 		
-		World world = App.engine.systems.physics.world;
+		World world = App.engine.systems.physics.physicsWorld;
 		//world.dispose();
 		
 		

@@ -1,6 +1,5 @@
 package com.deftwun.zombiecopter.components;
 
-import com.artemis.Component;
 import com.artemis.Entity;
 import com.artemis.PooledComponent;
 import com.badlogic.gdx.math.Vector2;
@@ -13,7 +12,6 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Json.Serializable;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.Logger;
-import com.badlogic.gdx.utils.Pool.Poolable;
 import com.deftwun.zombiecopter.App;
 import com.deftwun.zombiecopter.box2dJson.BodyModel;
 import com.deftwun.zombiecopter.box2dJson.JointModel;
@@ -32,7 +30,7 @@ public class PhysicsComponent extends PooledComponent implements Serializable{
 	public Entity ownerEntity = null;
 	public String collisionEffect = "";
 	
-	private PhysicsScene scene = new PhysicsScene(App.engine.systems.physics.world);
+	private PhysicsScene scene = new PhysicsScene(App.engine.systems.physics.physicsWorld);
 	private float collisionNormal;
 	private Logger logger = new Logger("PhysicsComponent",Logger.INFO);
 	

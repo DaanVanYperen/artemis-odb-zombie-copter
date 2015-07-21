@@ -111,7 +111,7 @@ public class GameEngine{
 		
 		addEntity(e);
 		*/
-		World world = App.engine.systems.physics.world;
+		World world = App.engine.systems.physics.physicsWorld;
 		BodyDef bd = new BodyDef();
 		bd.type = BodyType.DynamicBody;
 		
