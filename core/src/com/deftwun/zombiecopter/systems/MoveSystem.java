@@ -1,26 +1,18 @@
 package com.deftwun.zombiecopter.systems;
 
-import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.Family;
-import com.badlogic.ashley.systems.IteratingSystem;
+import com.artemis.Aspect;
+import com.artemis.Entity;
+import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.joints.WheelJoint;
 import com.badlogic.gdx.utils.Logger;
-import com.deftwun.zombiecopter.ComponentMappers;
 import com.deftwun.zombiecopter.App;
-import com.deftwun.zombiecopter.components.CarComponent;
-import com.deftwun.zombiecopter.components.ControllerComponent;
-import com.deftwun.zombiecopter.components.HelicopterComponent;
-import com.deftwun.zombiecopter.components.JumpComponent;
-import com.deftwun.zombiecopter.components.LedgeHangComponent;
-import com.deftwun.zombiecopter.components.PhysicsComponent;
-import com.deftwun.zombiecopter.components.SpriteComponent;
-import com.deftwun.zombiecopter.components.ThrusterComponent;
-import com.deftwun.zombiecopter.components.WalkComponent;
+import com.deftwun.zombiecopter.ComponentMappers;
+import com.deftwun.zombiecopter.components.*;
 
-public class MoveSystem extends IteratingSystem {
+public class MoveSystem extends EntityProcessingSystem {
 	private int LOG_LEVEL = Logger.INFO;
 	private Logger logger = new Logger("Move System",LOG_LEVEL);
 	
@@ -32,13 +24,13 @@ public class MoveSystem extends IteratingSystem {
 	
 	@SuppressWarnings("unchecked")
 	public MoveSystem(){
-		super(Family.all(PhysicsComponent.class,ControllerComponent.class)
+		super(Aspect.all(PhysicsComponent.class, ControllerComponent.class)
 				    .one(WalkComponent.class,
 						 JumpComponent.class,
 						 LedgeHangComponent.class,
 						 ThrusterComponent.class,
 						 HelicopterComponent.class,
-						 CarComponent.class).get());
+						 CarComponent.class));
 		logger.debug("initializing");
 	}
 	
@@ -48,10 +40,11 @@ public class MoveSystem extends IteratingSystem {
 	}	
 	
 	@Override
-	protected void processEntity(Entity entity, float deltaTime) {
+	protected void process(Entity entity) {
 		
 		ComponentMappers mappers = App.engine.mappers;
-	
+
+		final float deltaTime = world.delta;
 		ControllerComponent controller = mappers.controller.get(entity);
 		PhysicsComponent physics = mappers.physics.get(entity);
 		SpriteComponent sprite = mappers.sprite.get(entity);
