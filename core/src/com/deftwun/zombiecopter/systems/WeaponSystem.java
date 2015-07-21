@@ -45,14 +45,13 @@ public class WeaponSystem extends EntityProcessingSystem {
 				Entity bulletEntity = App.engine.factory.build(gun.projectileName,pos,vel,controller.lookVector.angle());
 				if (bulletEntity != null){
 					//Time to live
-					TimeToLiveComponent ttl = App.engine.createComponent(TimeToLiveComponent.class);
+					TimeToLiveComponent ttl = App.engine.createComponent(bulletEntity,TimeToLiveComponent.class);
 					ttl.timeLimit = gun.range / gun.bulletSpeed;
 					
 					//Parent 
-					ChildComponent child = App.engine.createComponent(ChildComponent.class);
+					ChildComponent child = App.engine.createComponent(bulletEntity,ChildComponent.class);
 					child.parentEntity = entity;
 				
-					bulletEntity.edit().add(ttl).add(child);
 					gun.time = 0;
 				}
 			}

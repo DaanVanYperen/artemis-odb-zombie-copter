@@ -44,9 +44,8 @@ public class VehicleSystem extends EntitySystem {
 				vehicleTeam = mappers.team.get(v);
 		if (operatorTeam != null) {
 			if (vehicleTeam == null) {
-				vehicleTeam = App.engine.createComponent(TeamComponent.class);
+				vehicleTeam = App.engine.createComponent(v,TeamComponent.class);
 				vehicleTeam.team = operatorTeam.team;
-				v.edit().add(vehicleTeam);
 			} else {
 				vehicleTeam.team = operatorTeam.team;
 			}
@@ -55,7 +54,7 @@ public class VehicleSystem extends EntitySystem {
 		operator.enterVehicle = false;
 		vehicle.occupantData = App.engine.factory.serialize(o);
 		if (App.engine.systems.player.getPlayer() == o) {
-			PlayerComponent p = engine.createComponent(PlayerComponent.class);
+			PlayerComponent p = engine.createComponent(v,PlayerComponent.class);
 			v.edit().add(p);
 			engine.systems.player.setPlayer(v);
 		}

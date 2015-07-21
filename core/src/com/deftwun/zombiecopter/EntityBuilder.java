@@ -17,10 +17,11 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Logger;
 import com.badlogic.gdx.utils.ObjectMap;
-import com.deftwun.zombiecopter.box2dJson.*;
+import com.deftwun.zombiecopter.box2dJson.BodyModel;
+import com.deftwun.zombiecopter.box2dJson.FixtureModel;
+import com.deftwun.zombiecopter.box2dJson.JointModel;
 import com.deftwun.zombiecopter.components.*;
 import com.deftwun.zombiecopter.components.TeamComponent.Team;
-import com.deftwun.zombiecopter.EntityConfig;
 
 public class EntityBuilder{
 	private final Logger logger = new Logger("EntityBuilder",Logger.INFO);
@@ -97,34 +98,30 @@ public class EntityBuilder{
 
 		//Controller (all entities have this)
 		logger.debug("  Attach Controller");
-		ControllerComponent controller = App.engine.createComponent(ControllerComponent.class);
-		e.add(controller);
-		
+		ControllerComponent controller = App.engine.createComponent(e,ControllerComponent.class);
+
 		
 		//Player
 		if (cfg.player){
 			logger.debug("  Attach Player");
-			PlayerComponent player = App.engine.createComponent(PlayerComponent.class);
-			e.add(player);
+			PlayerComponent player = App.engine.createComponent(e,PlayerComponent.class);
 		}
 		
 		//Brain
 		if (cfg.brain)	{
 			logger.debug("  Attach Brain");
-			BrainComponent brain = App.engine.createComponent(BrainComponent.class);
+			BrainComponent brain = App.engine.createComponent(e,BrainComponent.class);
 			if (cfg.thinkTime > 0) brain.thinkTime = cfg.thinkTime;
-			e.add(brain);
 		}
 		
 		//Team
 		if (!cfg.team.equals("")){
-			TeamComponent team = App.engine.createComponent(TeamComponent.class);
+			TeamComponent team = App.engine.createComponent(e,TeamComponent.class);
 			if (cfg.team.equals("player")) team.team = Team.PLAYER;
 			else if (cfg.team.equals("bullet")) team.team = Team.BULLET;
 			else if (cfg.team.equals("enemy")) team.team = Team.ENEMY;
 			else if (cfg.team.equals("wild")) team.team = Team.WILD;
 			else logger.error("  Team '" + cfg.team + "' not recognized.");
-			e.add(team);
 			logger.debug("  Attach Team : " + team.team);
 		}
 		
@@ -134,21 +131,20 @@ public class EntityBuilder{
 			if (weaponCfg != null){
 				//Json json = new Json();
 				logger.debug("  Attach Gun: " + cfg.weapon);
-				GunComponent gun = App.engine.createComponent(GunComponent.class);
+				GunComponent gun = App.engine.createComponent(e,GunComponent.class);
 				gun.projectileName = weaponCfg.projectileName;
 				gun.spreadAngle = weaponCfg.spreadAngle;
 				gun.bulletSpeed = weaponCfg.bulletSpeed;
 				gun.range = weaponCfg.range;
 				gun.cooldown = weaponCfg.cooldown;
-				gun.offset.set(cfg.weaponOffsetX,cfg.weaponOffsetY);
-				e.add(gun);
+				gun.offset.set(cfg.weaponOffsetX, cfg.weaponOffsetY);
 			}
 		}
 		
 		//Health
 		if (cfg.health > 0){
 			logger.debug("  Attach Health: " + cfg.health);
-			HealthComponent health = App.engine.createComponent(HealthComponent.class);
+			HealthComponent health = App.engine.createComponent(e,HealthComponent.class);
 			health.value = cfg.health;
 			health.max = cfg.health;
 			health.collisionDamageThreshold = cfg.collisionDamageThreshold;
@@ -158,93 +154,82 @@ public class EntityBuilder{
 			health.damageEffect = cfg.damageEffect;
 			health.deathEffect = cfg.deathEffect;
 			health.gibbedEffect = cfg.gibbedEffect;
-			e.add(health);
 		}
 		
 		//Time To live
 		if (cfg.timeToLive > 0){
 			logger.debug("  Attach TimeToLive: " + cfg.timeToLive);
-			TimeToLiveComponent ttl = App.engine.createComponent(TimeToLiveComponent.class);
+			TimeToLiveComponent ttl = App.engine.createComponent(e,TimeToLiveComponent.class);
 			ttl.timeLimit = cfg.timeToLive;
-			e.add(ttl);
 		}
 		
 		//Collectable
 		if (cfg.collectable){
 			logger.debug("  Attach Collectable");
-			Collectable collectable = App.engine.createComponent(Collectable.class);
-			e.add(collectable);
+			Collectable collectable = App.engine.createComponent(e,Collectable.class);
 		}
 		
 		//Collector
 		if (cfg.collector){
 			logger.debug("  Attach Collector");
-			Collector collector = App.engine.createComponent(Collector.class);
-			e.add(collector);
+			Collector collector = App.engine.createComponent(e,Collector.class);
 		}
 		
 		//Look
 		if (cfg.viewDistance > 0){
 			logger.debug("  Attach Look");
-			LookComponent look = App.engine.createComponent(LookComponent.class);
+			LookComponent look = App.engine.createComponent(e,LookComponent.class);
 			look.controlSpriteFlip = cfg.lookControlSpriteFlip;
-			e.add(look);
-		}	
+		}
 		
 		//Walker
 		if (cfg.walker){
 			logger.debug("  Attach Walk");
-			WalkComponent walk = App.engine.createComponent(WalkComponent.class);
+			WalkComponent walk = App.engine.createComponent(e,WalkComponent.class);
 			walk.topSpeed = cfg.speed;
-			e.add(walk);
-		}	
+		}
 		
 		//Jump
 		if (cfg.jumpPower > 0){
 			logger.debug("  Attach Jump");
-			JumpComponent jump = App.engine.createComponent(JumpComponent.class);
+			JumpComponent jump = App.engine.createComponent(e,JumpComponent.class);
 			jump.power = cfg.jumpPower;
 			jump.coolDown = cfg.jumpCooldown;
-			e.add(jump);
-		}	
+		}
 		
 		//Helicopter
 		if (cfg.helicopter){
 			logger.debug("  Attach Helicopter");
-			HelicopterComponent copter = App.engine.createComponent(HelicopterComponent.class);
+			HelicopterComponent copter = App.engine.createComponent(e,HelicopterComponent.class);
 			copter.topSpeed = cfg.speed;
 			copter.lateralPower = cfg.lateralPower;
 			copter.verticalPower = cfg.verticalPower;
 			copter.maxAltitude = cfg.maxAltitude;
-			e.add(copter);
 		}
 		
 		//Bullet
 		if (cfg.damage > 0){
 			logger.debug("  Attach Bullet: dmg=" + cfg.damage);
-			BulletComponent bullet = App.engine.createComponent(BulletComponent.class);
+			BulletComponent bullet = App.engine.createComponent(e,BulletComponent.class);
 			bullet.damage = cfg.damage;
-			e.add(bullet);
 		}
 		
 		//Vehicle
 		if (cfg.vehicle){
 			logger.debug("  Attach vehicle");
-			VehicleComponent vehicle = App.engine.createComponent(VehicleComponent.class);
-			e.add(vehicle);
+			VehicleComponent vehicle = App.engine.createComponent(e,VehicleComponent.class);
 		}
 		
 		//Vehicle Operator
 		if (cfg.vehicleOperator){
 			logger.debug("  Attach VehicleOperator");
-			VehicleOperatorComponent operator = App.engine.createComponent(VehicleOperatorComponent.class);
-			e.add(operator);
+			VehicleOperatorComponent operator = App.engine.createComponent(e,VehicleOperatorComponent.class);
 		}
 		
 		//Car 
 		if (cfg.car){
 			logger.debug("  Attach CarComponent");
-			CarComponent car = App.engine.createComponent(CarComponent.class);
+			CarComponent car = App.engine.createComponent(e,CarComponent.class);
 			car.speed = cfg.speed;
 			car.downForce = cfg.downForce;
 			car.frontWheelDrive = cfg.frontWheelDrive;
@@ -252,49 +237,43 @@ public class EntityBuilder{
 			if (!car.frontWheelDrive && !car.rearWheelDrive){
 				car.frontWheelDrive = true;
 			}
-			e.add(car);
 		}
 		
 		//Thruster
 		if (cfg.thruster){
 			logger.debug("  Attach ThrusterComponent");
-			ThrusterComponent thruster = App.engine.createComponent(ThrusterComponent.class);
+			ThrusterComponent thruster = App.engine.createComponent(e,ThrusterComponent.class);
 			thruster.power = cfg.thrustPower;
 			thruster.duration = cfg.thrustDuration;
 			thruster.delay = cfg.thrustDelay;
 			thruster.topSpeed = cfg.thrustSpeed;
-			e.add(thruster);
 		}
 		
 		//Leader
 		if (cfg.leader){
 			logger.debug("  Attach LeaderComponent");
-			LeaderComponent leader = App.engine.createComponent(LeaderComponent.class);
-			e.add(leader);
+			LeaderComponent leader = App.engine.createComponent(e,LeaderComponent.class);
 		}
 		
 		//Sticky
 		if (!cfg.stickyFixture.equals("")){
 			logger.debug("  Attach StickyComponent");
-			StickyComponent sticky = App.engine.createComponent(StickyComponent.class);
+			StickyComponent sticky = App.engine.createComponent(e,StickyComponent.class);
 			sticky.fixtureName = cfg.stickyFixture;
-			e.add(sticky);
 		}
 		
 		//Melee
 		if (cfg.meleeDamage > 0){
 			logger.debug("  Attach MeleeComponent");
-			MeleeComponent melee = App.engine.createComponent(MeleeComponent.class);
+			MeleeComponent melee = App.engine.createComponent(e,MeleeComponent.class);
 			melee.damage = cfg.meleeDamage;
 			melee.range = cfg.meleeRange;
 			melee.coolDown = cfg.meleeCoolDown;
-			e.add(melee);
 		}
 		
 		if (cfg.ledgeHanger){
 			logger.debug("  Attach LedgeHang");
-			LedgeHangComponent ledge = App.engine.createComponent(LedgeHangComponent.class);
-			e.add(ledge);
+			LedgeHangComponent ledge = App.engine.createComponent(e,LedgeHangComponent.class);
 		}
 		
 		App.engine.addEntity(entity);
@@ -304,8 +283,8 @@ public class EntityBuilder{
 
 	public Entity createHumanoid(EntityConfig config){
 		Entity e = App.engine.createEntity();
-		PhysicsComponent physics = App.engine.createComponent(PhysicsComponent.class);
-		SpriteComponent sprite = App.engine.createComponent(SpriteComponent.class);
+		PhysicsComponent physics = App.engine.createComponent(e,PhysicsComponent.class);
+		SpriteComponent sprite = App.engine.createComponent(e,SpriteComponent.class);
 		
 		//Physics
 		float size = config.size > 0 ? config.size : .5f,
@@ -397,17 +376,14 @@ public class EntityBuilder{
 			}			
 		}
 
-		e.edit().add(sprite)
-		 .add(physics);
-		
 		return e;	
 	}
 
 	public Entity createHelicopter(EntityConfig config){
 		
 		Entity e = App.engine.createEntity();
-		PhysicsComponent physics = App.engine.createComponent(PhysicsComponent.class);
-		SpriteComponent sprite = App.engine.createComponent(SpriteComponent.class);
+		PhysicsComponent physics = App.engine.createComponent(e,PhysicsComponent.class);
+		SpriteComponent sprite = App.engine.createComponent(e,SpriteComponent.class);
 		
 		// Physics 
 		float size = config.size > 0 ? config.size : 1, 
@@ -473,18 +449,15 @@ public class EntityBuilder{
 			s.setOriginCenter();
 			sprite.spriteMap.put("body", s);
 		}
-		
-		e.edit().add(sprite)
-		 .add(physics);
-		
+
 		return e;	
 	}
 
 	public Entity createCar(EntityConfig config){
 		
 		Entity e = App.engine.createEntity();
-		PhysicsComponent physics = App.engine.createComponent(PhysicsComponent.class);
-		SpriteComponent sprite = App.engine.createComponent(SpriteComponent.class);
+		PhysicsComponent physics = App.engine.createComponent(e,PhysicsComponent.class);
+		SpriteComponent sprite = App.engine.createComponent(e,SpriteComponent.class);
 		
 		// Physics 
 		float size = config.size, density = .1f, friction = .5f, restitution = .01f, linearDamping = 1;
@@ -576,17 +549,15 @@ public class EntityBuilder{
 				sprite.spriteMap.put(bodyName,s);
 			}			
 		}
-	
-		 e.edit().add(sprite).add(physics);
-		
+
 		return e;	
 	}
 
 	public Entity createBullet(EntityConfig config){
 		
 		Entity e = App.engine.createEntity();
-		PhysicsComponent physics = App.engine.createComponent(PhysicsComponent.class);
-		SpriteComponent sprite = App.engine.createComponent(SpriteComponent.class);
+		PhysicsComponent physics = App.engine.createComponent(e, PhysicsComponent.class);
+		SpriteComponent sprite = App.engine.createComponent(e,SpriteComponent.class);
 		
 		//Physics
 		float density = .1f, restitution = .1f, friction = .5f;
@@ -617,17 +588,15 @@ public class EntityBuilder{
 			s.setOriginCenter();
 			sprite.spriteMap.put("body",s);
 		}
-		
-		e.edit().add(sprite).add(physics);
-		
+
 		return e;	
 	}
 	
 	public Entity createBall(EntityConfig config){
 		
 		Entity e = App.engine.createEntity();
-		PhysicsComponent physics = App.engine.createComponent(PhysicsComponent.class);
-		SpriteComponent sprite = App.engine.createComponent(SpriteComponent.class);
+		PhysicsComponent physics = App.engine.createComponent(e,PhysicsComponent.class);
+		SpriteComponent sprite = App.engine.createComponent(e,SpriteComponent.class);
 		
 		//Physics
 		float density = .6f, restitution = .1f, friction = .5f;
@@ -657,9 +626,7 @@ public class EntityBuilder{
 			s.setOriginCenter();
 			sprite.spriteMap.put("body",s);
 		}
-		
-		e.edit().add(sprite).add(physics);
-		
+
 		return e;	
 	}
 }

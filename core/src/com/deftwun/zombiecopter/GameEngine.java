@@ -275,7 +275,7 @@ public class GameEngine{
 	// @todo migration what have I done! better clean this up later!
 	public void removeAllEntities(){
 		logger.debug("Removing all entities");
-		final IntBag allEntities = getEntitiesFor(Aspect.getEmpty());
+		final IntBag allEntities = getEntitiesFor(Aspect.all());
 		for (int i = 0, s = allEntities.size(); i < s; i++) {
 			entityEngine.getEntity(i).deleteFromWorld();
 		}
@@ -291,10 +291,14 @@ public class GameEngine{
 	public Entity createEntity() {
 		return entityEngine.createEntity();
 	}
-	
-	public <T extends Component> T createComponent (Class<T> componentType) {
+
+	public <T extends Component> T createComponent (Entity entity, Class<T> componentType) {
+		return createComponent(entity.edit(), componentType);
+	}
+
+	public <T extends Component> T createComponent (EntityEdit entityEdit, Class<T> componentType) {
 		try {
-			return componentType.newInstance();
+			return entityEdit.create(componentType);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

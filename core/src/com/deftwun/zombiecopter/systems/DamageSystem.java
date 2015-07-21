@@ -79,10 +79,9 @@ public class DamageSystem extends EntityProcessingSystem{
 				
 				//Set Time to live
 				TimeToLiveComponent ttl = mappers.timeToLive.get(entity);
-				if (ttl == null) ttl = App.engine.createComponent(TimeToLiveComponent.class);
+				if (ttl == null) ttl = App.engine.createComponent(entity,TimeToLiveComponent.class);
 				ttl.time = 0;
 				ttl.timeLimit = deadEntityTimeLimit;
-				entity.edit().add(ttl);
 				logger.debug("  ..countdown to removal (timeToLive) = " + ttl.timeLimit + " seconds.");
 			}
 		}

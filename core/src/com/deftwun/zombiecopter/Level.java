@@ -106,13 +106,12 @@ public class Level {
 		// 				other wise collisions won't be handled properly.)
 		entity = App.engine.createEntity();
 		
-		PhysicsComponent physics = App.engine.createComponent(PhysicsComponent.class);
+		PhysicsComponent physics = App.engine.createComponent(entity,PhysicsComponent.class);
 		for (ObjectMap.Entry<String,Body> entry :  parser.getBodies()){
 			physics.addBody(entry.key,entry.value);
 		}
 		physics.setFilter(CollisionBits.Terrain,CollisionBits.Mask_Terrain);
-		entity.edit().add(physics);
-		
+
 		App.engine.addEntity(entity);
 		
 	}
