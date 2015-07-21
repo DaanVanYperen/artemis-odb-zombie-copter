@@ -49,13 +49,11 @@ public class EntityBuilder{
 
 		Json json = new Json() {
 			protected Object newInstance (Class type) {
-
 				// Components are managed by ECS.
 				if ( ClassReflection.isAssignableFrom(Component.class, type))
 				{
 					return e.edit().create(type);
 				}
-
 				return super.newInstance(type);
 			}
 		};
