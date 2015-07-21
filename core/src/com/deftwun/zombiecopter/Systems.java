@@ -1,6 +1,5 @@
 package com.deftwun.zombiecopter;
 
-import com.artemis.Engine;
 import com.artemis.WorldConfiguration;
 import com.deftwun.zombiecopter.systems.*;
 
@@ -27,24 +26,19 @@ public class Systems {
 
 		config.setSystem(physics);
 		config.setSystem(agent);
-		config.setSystem(camera);
+		config.setManager(camera);
 		config.setSystem(move);
 		config.setSystem(player);
 		config.setSystem(weapon);
 		config.setSystem(lifetime);
 		config.setSystem(vision);
 		config.setSystem(spriteRender);
-		config.setSystem(team);
+		config.setManager(team);
 		config.setSystem(collectable);
 		config.setSystem(spawn);
 		config.setSystem(damage);
 		config.setSystem(particle);
 		config.setSystem(vehicle);
-		
-		config.addEntityListener(camera);
-		config.addEntityListener(physics);
-		config.addEntityListener(player);
-		config.addEntityListener(spriteRender);
 
 	}
 }
