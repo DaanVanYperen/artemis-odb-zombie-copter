@@ -14,7 +14,6 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.WheelJoint;
 import com.badlogic.gdx.physics.box2d.joints.WheelJointDef;
 import com.badlogic.gdx.utils.Logger;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class GameEngine{
 	
@@ -272,10 +271,14 @@ public class GameEngine{
 		logger.debug("Entity Removed: " + e.getId());
 		e.deleteFromWorld();
 	}
-	
+
+	// @todo migration what have I done! better clean this up later!
 	public void removeAllEntities(){
 		logger.debug("Removing all entities");
-		throw new NotImplementedException();
+		final IntBag allEntities = getEntitiesFor(Aspect.getEmpty());
+		for (int i = 0, s = allEntities.size(); i < s; i++) {
+			entityEngine.getEntity(i).deleteFromWorld();
+		}
 	}
 			
 	public void reset(){
