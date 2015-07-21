@@ -1,26 +1,20 @@
 package com.deftwun.zombiecopter.systems;
 
 import com.artemis.Aspect;
-import com.artemis.systems.EntityProcessingSystem;
-import net.dermetfan.gdx.physics.box2d.Box2DUtils;
-
 import com.artemis.Entity;
+import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Logger;
 import com.deftwun.zombiecopter.AI.BrainState;
-import com.deftwun.zombiecopter.ComponentMappers;
 import com.deftwun.zombiecopter.App;
+import com.deftwun.zombiecopter.ComponentMappers;
 import com.deftwun.zombiecopter.RayCast;
-import com.deftwun.zombiecopter.components.BrainComponent;
-import com.deftwun.zombiecopter.components.ControllerComponent;
-import com.deftwun.zombiecopter.components.GunComponent;
-import com.deftwun.zombiecopter.components.MeleeComponent;
-import com.deftwun.zombiecopter.components.PhysicsComponent;
-import com.deftwun.zombiecopter.components.TeamComponent;
+import com.deftwun.zombiecopter.components.*;
 import com.deftwun.zombiecopter.components.TeamComponent.Team;
+import net.dermetfan.gdx.physics.box2d.Box2DUtils;
 
 
 //This AI system tries to dynamically determine how an entity should behave based on the components it contains
@@ -69,7 +63,7 @@ public class AgentSystem extends EntityProcessingSystem {
 		PhysicsComponent physics = mappers.physics.get(e);
 		BrainComponent brain = mappers.brain.get(e);
 		
-		World w = App.engine.systems.physics.world;
+		World w = App.engine.systems.physics.physicsWorld;
 		controller.moveVector.nor();
 		
 		float x1 = brain.myPosition.x,
@@ -97,7 +91,7 @@ public class AgentSystem extends EntityProcessingSystem {
 		PhysicsComponent physics = mappers.physics.get(e);
 		BrainComponent brain = mappers.brain.get(e);
 		
-		World w = App.engine.systems.physics.world;
+		World w = App.engine.systems.physics.physicsWorld;
 		controller.moveVector.nor();
 		
 		float x1 = brain.myPosition.x,
@@ -372,7 +366,7 @@ public class AgentSystem extends EntityProcessingSystem {
 		switch (brain.state){
 		
 			case ATTACK:{
-				World w = App.engine.systems.physics.world;
+				World w = App.engine.systems.physics.physicsWorld;
 				PhysicsComponent enemyPhysics = mappers.physics.get(brain.closestEnemy);
 				boolean clearShot = rayCast.cast(w,physics,enemyPhysics),
 						inRange = brain.myPosition.dst(enemyPhysics.getPosition()) <= brain.desiredRange;
