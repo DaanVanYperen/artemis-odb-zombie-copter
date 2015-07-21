@@ -23,13 +23,14 @@ public class CameraSystem extends Manager {
 	private PhysicsComponent targetPhysics;
 	private Rectangle camRect;
 
-	public CameraSystem(){
+	@Override
+	protected void initialize() {
 		float viewWidth = App.engine.viewWidth,
-			  viewHeight = App.engine.viewHeight;
+				viewHeight = App.engine.viewHeight;
 		logger = new Logger("CameraSystem",LOG_LEVEL);
 		logger.debug("initializing");
 		logger.debug("ViewSize is " + viewWidth + "x" + viewHeight);
-		camera = new OrthographicCamera();		
+		camera = new OrthographicCamera();
 		viewport = new ExtendViewport(viewWidth,viewHeight,0,0,camera);
 
 		camera.zoom = 1.1f;
@@ -38,10 +39,10 @@ public class CameraSystem extends Manager {
 		camera.position.y = 200;
 		*/
 		camRect = new Rectangle();
-		
-		
+
+
 	}
-	
+
 	public ExtendViewport getViewport(){
 		return viewport;
 	}

@@ -51,6 +51,7 @@ public class GameEngine{
 				  debugEntitySpawnRate = .1f;
 
 	public GameEngine() {
+		App.engine=this;
 		logger.debug("Initializing");
 		final WorldConfiguration config = new WorldConfiguration();
 		systems = new Systems(config);

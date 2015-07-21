@@ -20,7 +20,7 @@ public class VehicleSystem extends EntitySystem {
 
 	public VehicleSystem() {
 		// ideally this would be a BaseSystem, but can't access flyweights from there (yet).
-		super(null);
+		super(Aspect.all(WorkaroundComponent.class));
 		logger.debug("Initializing");
 	}
 
