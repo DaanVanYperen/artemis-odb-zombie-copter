@@ -27,7 +27,7 @@ allprojects {
         roboVMVersion = '1.5.0'
         box2DLightsVersion = '1.4'
         aiVersion = '1.5.0'
-        artemisVersion = '0.10.1' // edit version artemis-odb-gradle-plugin, see buildscript.dependencies.classpath above.
+        artemisVersion = '0.10.2' // edit version artemis-odb-gradle-plugin, see buildscript.dependencies.classpath above.
     }
 
     repositories {
