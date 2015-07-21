@@ -13,7 +13,7 @@ import com.deftwun.zombiecopter.components.*;
 public class VehicleSystem extends EntitySystem {
 	public static final Aspect.Builder VEHICLE_ASPECTS = Aspect.all(VehicleComponent.class);
 	public static final Aspect.Builder VEHICLE_OPERATOR_ASPECTS = Aspect.all(VehicleOperatorComponent.class);
-	private Logger logger = new Logger("VehicleSystem",Logger.INFO);
+	private Logger logger = new Logger("VehicleSystem", Logger.INFO);
 
 	private Entity vehicleFly;
 	private Entity occupantFly;
@@ -31,58 +31,57 @@ public class VehicleSystem extends EntitySystem {
 		occupantFly = createFlyweightEntity();
 	}
 
-	private void enterVehicle(Entity o, Entity v){
+	private void enterVehicle(Entity o, Entity v) {
 		logger.debug("Enter Vehicle");
 		GameEngine engine = App.engine;
 		ComponentMappers mappers = engine.mappers;
-		
-		VehicleComponent vehicle = mappers.vehicle.get(v);		
+
+		VehicleComponent vehicle = mappers.vehicle.get(v);
 		VehicleOperatorComponent operator = mappers.vehicleOperator.get(o);
-		
+
 		//Vehicle takes on operator team
 		TeamComponent operatorTeam = mappers.team.get(o),
-		              vehicleTeam = mappers.team.get(v);
+				vehicleTeam = mappers.team.get(v);
 		if (operatorTeam != null) {
-			if (vehicleTeam == null){
+			if (vehicleTeam == null) {
 				vehicleTeam = App.engine.createComponent(TeamComponent.class);
 				vehicleTeam.team = operatorTeam.team;
 				v.edit().add(vehicleTeam);
-			}
-			else {
+			} else {
 				vehicleTeam.team = operatorTeam.team;
 			}
 		}
-		
+
 		operator.enterVehicle = false;
 		vehicle.occupantData = App.engine.factory.serialize(o);
-		if (App.engine.systems.player.getPlayer() == o){
+		if (App.engine.systems.player.getPlayer() == o) {
 			PlayerComponent p = engine.createComponent(PlayerComponent.class);
 			v.edit().add(p);
 			engine.systems.player.setPlayer(v);
 		}
 		engine.removeEntity(o);
 	}
-	
-	private void ejectOccupant(Entity e){
+
+	private void ejectOccupant(Entity e) {
 		logger.debug("Eject occupant");
-		
+
 		GameEngine engine = App.engine;
 		ComponentMappers mappers = engine.mappers;
-		
+
 		PhysicsComponent physics = mappers.physics.get(e);
 		ControllerComponent controller = mappers.controller.get(e);
 		VehicleComponent vehicle = mappers.vehicle.get(e);
 		TeamComponent team = mappers.team.get(e);
-		
+
 		if (vehicle.occupantData.equals("")) return;
 		vehicle.eject = false;
-		
+
 		//Remove team
 		if (team != null) e.edit().remove(TeamComponent.class); // remove team
-		
+
 		//Reset entity controller
 		controller.reset();
-				
+
 		//Recreate occupant
 		Entity occupant = engine.factory.deserialize(vehicle.occupantData);
 		if (occupant == null) {
@@ -90,17 +89,17 @@ public class VehicleSystem extends EntitySystem {
 			return;
 		}
 		PhysicsComponent occupantPhys = mappers.physics.get(occupant);
-		if (occupantPhys != null){
+		if (occupantPhys != null) {
 			occupantPhys.setPosition(physics.getPosition());
 			occupantPhys.setLinearVelocity(physics.getLinearVelocity());
 		}
 		engine.addEntity(occupant);
 		App.engine.systems.player.setPlayer(occupant);
-		
+
 		vehicle.occupantData = "";
 	}
-	
-	public void processSystem(){
+
+	public void processSystem() {
 
 		IntBag vehicles = App.engine.getEntitiesFor(VEHICLE_ASPECTS);
 
@@ -111,14 +110,13 @@ public class VehicleSystem extends EntitySystem {
 	private void ejectOccupantsFromExplodingCars(IntBag vehicles) {
 		ComponentMappers mappers = App.engine.mappers;
 		//Vehicles
-		for (int vid : vehicles.getData()){
-			vehicleFly.id=vid;
+		for (int i = 0, s = vehicles.size(); i < s; i++) {
+			vehicleFly.id = vehicles.get(i);
 
 			VehicleComponent vehicle = mappers.vehicle.get(vehicleFly);
 			HealthComponent health = mappers.health.get(vehicleFly);
 
-			if ((vehicle.eject && !vehicle.occupantData.equals("")) || (health != null && health.value <= 0))
-			{
+			if ((vehicle.eject && !vehicle.occupantData.equals("")) || (health != null && health.value <= 0)) {
 				ejectOccupant(vehicleFly);
 			}
 		}
@@ -128,19 +126,19 @@ public class VehicleSystem extends EntitySystem {
 		ComponentMappers mappers = App.engine.mappers;
 		IntBag operators = App.engine.getEntitiesFor(VEHICLE_OPERATOR_ASPECTS);
 		//Operators
-		for (int oid : operators.getData()){
-			occupantFly.id = oid;
+		for (int oi = 0, s = operators.size(); oi < s; oi++) {
+			occupantFly.id = operators.get(oi);
 
 			final VehicleOperatorComponent operator = mappers.vehicleOperator.get(occupantFly);
 			final PhysicsComponent operatorPhysics = mappers.physics.get(occupantFly);
 
-			for (int vid : vehicles.getData()){
-				this.vehicleFly.id=vid;
+			for (int vi = 0, s2 = vehicles.size(); vi < s2; vi++) {
+				vehicleFly.id = vehicles.get(vi);
 
 				final PhysicsComponent vehiclePhysics = mappers.physics.get(vehicleFly);
 				float vehicleRange = vehiclePhysics.getPosition().dst(operatorPhysics.getPosition());
-				if (vehicleRange <= 3 && operator.enterVehicle){
-					enterVehicle(occupantFly,vehicleFly);
+				if (vehicleRange <= 3 && operator.enterVehicle) {
+					enterVehicle(occupantFly, vehicleFly);
 					break;
 				}
 			}
