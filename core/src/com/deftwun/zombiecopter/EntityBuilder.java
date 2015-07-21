@@ -23,6 +23,8 @@ import com.deftwun.zombiecopter.box2dJson.JointModel;
 import com.deftwun.zombiecopter.components.*;
 import com.deftwun.zombiecopter.components.TeamComponent.Team;
 
+import java.util.Arrays;
+
 public class EntityBuilder{
 	private final Logger logger = new Logger("EntityBuilder",Logger.INFO);
 	private final Vector2 tmpVector = new Vector2();
@@ -36,7 +38,9 @@ public class EntityBuilder{
 	public String serialize(Entity entity){
 		Json json = new Json();
 		logger.debug("Serialize Entity: " + entity.getId());
-		return json.toJson(entity.getComponents(serializeBag).getData());
+
+		final Bag<Component> components = entity.getComponents(serializeBag);
+		return json.toJson(Arrays.copyOf(components.getData(), components.size()));
 	}
 	
 	public Entity deserialize(String data){
