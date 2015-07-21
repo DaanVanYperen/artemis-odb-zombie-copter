@@ -53,10 +53,10 @@ public class VehicleSystem extends EntitySystem {
 
 		operator.enterVehicle = false;
 		vehicle.occupantData = App.engine.factory.serialize(o);
-		if (App.engine.systems.player.getPlayer() == o) {
+		if (App.engine.systems.player.isPlayer(o)) {
 			PlayerComponent p = engine.createComponent(v,PlayerComponent.class);
-			v.edit().add(p);
-			engine.systems.player.setPlayer(v);
+			final Entity notFlyVehicle = world.getEntity(v.id);
+			engine.systems.player.setPlayer(notFlyVehicle);
 		}
 		engine.removeEntity(o);
 	}
@@ -93,7 +93,9 @@ public class VehicleSystem extends EntitySystem {
 			occupantPhys.setLinearVelocity(physics.getLinearVelocity());
 		}
 		engine.addEntity(occupant);
-		App.engine.systems.player.setPlayer(occupant);
+
+		Entity notFlyOccupant = world.getEntity(occupant.id);
+		App.engine.systems.player.setPlayer(notFlyOccupant);
 
 		vehicle.occupantData = "";
 	}

@@ -19,6 +19,4 @@ public class App extends Game {
 		gameScreen = new GameScreen();
 		setScreen(gameScreen);
 	}
-
-	
 }

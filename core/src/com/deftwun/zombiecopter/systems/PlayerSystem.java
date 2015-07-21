@@ -15,13 +15,17 @@ import com.deftwun.zombiecopter.components.VehicleComponent;
 import com.deftwun.zombiecopter.components.VehicleOperatorComponent;
 
 public class PlayerSystem extends BaseSystem implements InputProcessor {
-	private Logger logger = new Logger("PlayerSystem",Logger.INFO);	
+	private Logger logger = new Logger("PlayerSystem",Logger.INFO);
 	private Entity currentPlayer = null;
-	
+
 	public PlayerSystem(){
 		logger.debug("initializing");
 	}
-	
+
+	public boolean isPlayer(Entity o) {
+		return currentPlayer != null && currentPlayer.equals(o);
+	}
+
 	public void setPlayer(Entity e){
 		currentPlayer = e;
 		if (e != null)
@@ -127,4 +131,5 @@ public class PlayerSystem extends BaseSystem implements InputProcessor {
 	public boolean scrolled(int amount) {
 		return false;
 	}
+
 }

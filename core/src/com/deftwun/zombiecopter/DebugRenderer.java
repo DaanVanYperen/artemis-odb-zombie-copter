@@ -90,7 +90,7 @@ public class DebugRenderer{
         font.draw(batch, infoString,0,App.engine.systems.camera.getCamera().viewportHeight - 20);
         batch.end();
 	}
-	
+
 	private void renderPhysics(){
 		World w = App.engine.systems.physics.physicsWorld;
         physicsRenderer.render(w, scaledProjection);

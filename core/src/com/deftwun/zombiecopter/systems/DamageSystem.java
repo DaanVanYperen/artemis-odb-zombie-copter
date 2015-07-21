@@ -50,7 +50,7 @@ public class DamageSystem extends EntityProcessingSystem{
 			if (!health.corpse.equals("")){
 				logger.debug("Creating corpse: " + health.corpse);
 				Entity corpse = App.engine.factory.build(health.corpse,physics.getPosition(), physics.getLinearVelocity());
-				if (entity == App.engine.systems.player.getPlayer()){
+				if (App.engine.systems.player.isPlayer(entity)){
 					App.engine.systems.player.setPlayer(corpse);
 				}
 				App.engine.removeEntity(entity);
