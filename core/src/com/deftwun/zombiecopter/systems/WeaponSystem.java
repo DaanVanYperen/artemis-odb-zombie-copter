@@ -60,7 +60,7 @@ public class WeaponSystem extends EntityProcessingSystem {
 		//Melee Attack
 		if (melee != null){
 			melee.triggerPulled = controller.attack; 
-			melee.time += world.delta;;
+			melee.time += world.delta;
 			String status = String.format("Melee.target = %b\n TriggerPulled = %b\n Cooled = %b",
 										   melee.target != null,melee.triggerPulled,melee.time >= melee.coolDown);
 			logger.debug(status);

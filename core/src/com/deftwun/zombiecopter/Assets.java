@@ -147,7 +147,7 @@ public class Assets {
 	
 	private void loadWeapons(){
 		logger.debug("Loading Weapons");
-		Json json = new Json();;
+		Json json = new Json();
 		for (String s : manifest.weapons){
 			try {
 				WeaponConfig config = json.fromJson(WeaponConfig.class, Gdx.files.internal(s));

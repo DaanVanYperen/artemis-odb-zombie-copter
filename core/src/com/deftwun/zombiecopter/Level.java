@@ -1,7 +1,6 @@
 package com.deftwun.zombiecopter;
 
 import com.artemis.Entity;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.*;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
@@ -238,18 +237,18 @@ public class Level {
 	}
 	
 	public void render(Matrix4 projection){
-		mapRenderer.setView((OrthographicCamera) App.engine.systems.camera.getCamera());
+		mapRenderer.setView(App.engine.systems.camera.getCamera());
 		mapRenderer.render();
 	}
 	
 	public void renderLayer(String layerName, Matrix4 projection){
-		mapRenderer.setView((OrthographicCamera) App.engine.systems.camera.getCamera());
+		mapRenderer.setView(App.engine.systems.camera.getCamera());
 		MapLayer layer = map.getLayers().get(layerName);
 		if (layer != null) mapRenderer.renderTileLayer((TiledMapTileLayer) layer);
 	}
 	
 	public void renderLayer(int index, Matrix4 projection){
-		mapRenderer.setView((OrthographicCamera) App.engine.systems.camera.getCamera());
+		mapRenderer.setView(App.engine.systems.camera.getCamera());
 		MapLayer layer = map.getLayers().get(index);
 		if (layer != null) mapRenderer.renderTileLayer((TiledMapTileLayer) layer);
 	}

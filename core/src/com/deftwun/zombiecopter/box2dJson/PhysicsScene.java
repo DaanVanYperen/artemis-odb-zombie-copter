@@ -26,12 +26,12 @@ public class PhysicsScene{
 	private PhysicsSceneListener listener = null;
 	
 	public interface PhysicsSceneListener{
-		public void fixtureAdded(Fixture f);
-		public void bodyAdded(Body b);
-		public void jointAdded(Joint j);
-		public void fixtureRemoved(Fixture f);
-		public void bodyRemoved(Body b);
-		public void jointRemoved(Joint j);
+		void fixtureAdded(Fixture f);
+		void bodyAdded(Body b);
+		void jointAdded(Joint j);
+		void fixtureRemoved(Fixture f);
+		void bodyRemoved(Body b);
+		void jointRemoved(Joint j);
 	}
 	
 	public PhysicsScene(World w){
@@ -266,7 +266,7 @@ public class PhysicsScene{
 			//Check if its the primary body. If so, then automatically set a new primary
 			if (b == primaryBody){
 				if (bodies.size > 0)
-					primaryBody = (Body) bodies.values().toArray().get(0);
+					primaryBody = bodies.values().toArray().get(0);
 				else primaryBody = null;
 			}
 			
