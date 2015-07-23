@@ -15,6 +15,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Logger;
 import com.badlogic.gdx.utils.ObjectMap;
+import com.deftwun.zombiecopter.components.DropOffPoint;
 import com.deftwun.zombiecopter.components.Physics;
 import com.deftwun.zombiecopter.systems.SpawnSystem;
 import net.dermetfan.gdx.physics.box2d.Box2DMapObjectParser;
@@ -143,9 +144,13 @@ public class Level {
 			
 			if (r != null) range = Float.parseFloat(r.toString());
 			if (x != null && y != null)
-				position.set((Float)x,(Float)y).scl(1/App.engine.PIXELS_PER_METER);					  
-			App.engine.systems.dropoff.add(new DropOffPoint(position,range)); 	
-		}		
+				position.set((Float)x,(Float)y).scl(1/App.engine.PIXELS_PER_METER);
+
+			final Entity dropOffEntity = App.engine.createEntity();
+			final DropOffPoint dropoffPoint = App.engine.createComponent(dropOffEntity, DropOffPoint.class);
+			dropoffPoint.position.set(position);
+			dropoffPoint.range = range;
+		}
 	}
 	
 	private void createSpawnZones(Map map){

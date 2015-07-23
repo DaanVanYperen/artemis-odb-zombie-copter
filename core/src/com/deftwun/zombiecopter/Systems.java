@@ -6,6 +6,7 @@ import com.deftwun.zombiecopter.managers.TeamManager;
 import com.deftwun.zombiecopter.systems.*;
 import com.deftwun.zombiecopter.systems.action.VehicleEjectSystem;
 import com.deftwun.zombiecopter.systems.action.VehicleMountingSystem;
+import com.deftwun.zombiecopter.systems.logic.CivilianDropOffSystem;
 import com.deftwun.zombiecopter.systems.logic.LifetimeSystem;
 
 public class Systems {
