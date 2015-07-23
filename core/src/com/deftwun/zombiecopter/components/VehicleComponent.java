@@ -1,12 +1,11 @@
 package com.deftwun.zombiecopter.components;
 
-import com.artemis.Component;
 import com.artemis.PooledComponent;
-import com.badlogic.gdx.utils.Pool.Poolable;
 
 public class VehicleComponent extends PooledComponent {
 
-	public String occupantData = "";
+	public static final String NO_OCCUPANT = "";
+	public String occupantData = NO_OCCUPANT;
 	public float time = 0,
 				 coolDown = .5f;
 	public boolean eject = false;
@@ -19,5 +18,8 @@ public class VehicleComponent extends PooledComponent {
 		time = 0;
 		eject = false;
 	}
-	
+
+	public boolean isOccupied() {
+		return occupantData != null && !occupantData.isEmpty();
+	}
 }

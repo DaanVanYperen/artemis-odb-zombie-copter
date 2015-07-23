@@ -4,6 +4,8 @@ import com.artemis.WorldConfiguration;
 import com.deftwun.zombiecopter.managers.CameraManager;
 import com.deftwun.zombiecopter.managers.TeamManager;
 import com.deftwun.zombiecopter.systems.*;
+import com.deftwun.zombiecopter.systems.logic.VehicleEjectSystem;
+import com.deftwun.zombiecopter.systems.logic.VehicleMountingSystem;
 
 public class Systems {
 
@@ -21,7 +23,7 @@ public class Systems {
 	public CivilianDropOffSystem dropoff = new CivilianDropOffSystem();
 	public DamageSystem damage = new DamageSystem();
 	public ParticleSystem particle = new ParticleSystem();
-	public VehicleSystem vehicle = new VehicleSystem();
+	public VehicleEjectSystem vehicle = new VehicleEjectSystem();
 	public VehicleMountingSystem vehicleMounting = new VehicleMountingSystem();
 	public AgentSystem agent = new AgentSystem();
 	
