@@ -1,11 +1,13 @@
 package com.deftwun.zombiecopter;
 
 import com.artemis.WorldConfiguration;
+import com.deftwun.zombiecopter.managers.CameraManager;
+import com.deftwun.zombiecopter.managers.TeamManager;
 import com.deftwun.zombiecopter.systems.*;
 
 public class Systems {
 
-	public CameraSystem camera = new CameraSystem();
+	public CameraManager camera = new CameraManager();
 	public MoveSystem move = new MoveSystem();
 	public PhysicsSystem physics = new PhysicsSystem();
 	public PlayerSystem player = new PlayerSystem();
@@ -13,7 +15,7 @@ public class Systems {
 	public LifetimeSystem lifetime = new LifetimeSystem();
 	public SpriteRenderSystem spriteRender = new SpriteRenderSystem();
 	public VisionSystem vision = new VisionSystem();
-	public TeamSystem team = new TeamSystem();
+	public TeamManager team = new TeamManager();
 	public CollectableSystem collectable = new CollectableSystem();
 	public SpawnSystem spawn = new SpawnSystem();
 	public CivilianDropOffSystem dropoff = new CivilianDropOffSystem();

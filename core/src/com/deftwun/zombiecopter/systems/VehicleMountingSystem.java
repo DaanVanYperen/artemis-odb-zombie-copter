@@ -33,7 +33,7 @@ public class VehicleMountingSystem extends DualEntityProcessingSystem {
 
 	@Override
 	protected void process(Entity vehicle, Entity operator) {
-	final VehicleOperatorComponent vehicleOperator = this.mVehicleOperator.get(operator);
+		final VehicleOperatorComponent vehicleOperator = this.mVehicleOperator.get(operator);
 		if (vehicleOperator.enterVehicle) {
 			if (withinRange(vehicle, operator)) {
 				enterVehicle(operator, vehicle);
