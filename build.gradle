@@ -1,5 +1,6 @@
 buildscript {
     repositories {
+        maven { url "C:/Users/Daan/.m2/repository" }
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
@@ -27,10 +28,12 @@ allprojects {
         roboVMVersion = '1.5.0'
         box2DLightsVersion = '1.4'
         aiVersion = '1.5.0'
-        artemisVersion = '0.10.2' // edit version artemis-odb-gradle-plugin, see buildscript.dependencies.classpath above.
+        artemisVersion = '0.10.3-SNAPSHOT' // edit version artemis-odb-gradle-plugin, see buildscript.dependencies.classpath above.
+        artemisContribVersion = '0.11-SNAPSHOT'
     }
 
     repositories {
+        maven { url "C:/Users/Daan/.m2/repository" }
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
@@ -71,6 +74,11 @@ project(":core") {
         compile "net.onedaybeard.artemis:artemis-odb:$artemisVersion"
         // Artemis-odb annotation processor (see https://github.com/junkdog/artemis-odb/wiki/EntityFactory)
         provided "net.onedaybeard.artemis:artemis-odb-processor:$artemisVersion"
+
+        compile "net.onedaybeard.artemis:artemis-odb:$artemisVersion"
+
+        // Artemis-odb bonus functionality (abstract systems, events, components).
+        compile "net.mostlyoriginal.artemis-odb:contrib-core:$artemisContribVersion"
     }
 }
 
