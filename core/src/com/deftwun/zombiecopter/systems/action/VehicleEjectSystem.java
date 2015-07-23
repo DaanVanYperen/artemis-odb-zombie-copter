@@ -1,4 +1,4 @@
-package com.deftwun.zombiecopter.systems.logic;
+package com.deftwun.zombiecopter.systems.action;
 
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
