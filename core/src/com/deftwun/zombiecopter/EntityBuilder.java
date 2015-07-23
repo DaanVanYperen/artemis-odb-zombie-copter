@@ -171,7 +171,7 @@ public class EntityBuilder{
 		if (cfg.timeToLive > 0){
 			logger.debug("  Attach TimeToLive: " + cfg.timeToLive);
 			TimeToLive ttl = App.engine.createComponent(e,TimeToLive.class);
-			ttl.timeLimit = cfg.timeToLive;
+			ttl.time = cfg.timeToLive;
 		}
 		
 		//Collectable

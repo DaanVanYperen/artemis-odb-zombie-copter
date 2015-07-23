@@ -26,10 +26,14 @@ public class LifetimeSystem extends EntityProcessingSystem {
 	@Override
 	protected void process(Entity entity) {
 		TimeToLive timeToLive = mTimeToLive.get(entity);
-		timeToLive.time += world.delta;
-		if (timeToLive.time >= timeToLive.timeLimit) {
-			logger.debug("Entity #" + entity.getId() + " has expired: Time to live exceeded");
-			entity.deleteFromWorld();
+		timeToLive.time -= world.delta;
+		if ( timeToLive.time <= 0 ) {
+			executeOn(entity);
 		}
+	}
+
+	private void executeOn(Entity entity) {
+		logger.debug("Entity #" + entity.getId() + " has expired: Time to live exceeded");
+		entity.deleteFromWorld();
 	}
 }

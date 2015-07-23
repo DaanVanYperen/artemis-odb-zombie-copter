@@ -46,7 +46,7 @@ public class WeaponSystem extends EntityProcessingSystem {
 				if (bulletEntity != null){
 					//Time to live
 					TimeToLive ttl = App.engine.createComponent(bulletEntity,TimeToLive.class);
-					ttl.timeLimit = gun.range / gun.bulletSpeed;
+					ttl.time = gun.range / gun.bulletSpeed;
 					
 					//Parent 
 					Child child = App.engine.createComponent(bulletEntity,Child.class);
