@@ -1,7 +1,9 @@
 package com.deftwun.zombiecopter.systems;
 
 import com.artemis.BaseSystem;
+import com.artemis.ComponentMapper;
 import com.artemis.Entity;
+import com.artemis.annotations.Wire;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Vector2;
@@ -9,14 +11,14 @@ import com.badlogic.gdx.utils.Logger;
 import com.deftwun.zombiecopter.App;
 import com.deftwun.zombiecopter.ComponentMappers;
 import com.deftwun.zombiecopter.UserInterface;
-import com.deftwun.zombiecopter.components.ControllerComponent;
-import com.deftwun.zombiecopter.components.PhysicsComponent;
-import com.deftwun.zombiecopter.components.VehicleComponent;
-import com.deftwun.zombiecopter.components.VehicleOperatorComponent;
+import com.deftwun.zombiecopter.components.*;
 
+@Wire
 public class PlayerSystem extends BaseSystem implements InputProcessor {
 	private Logger logger = new Logger("PlayerSystem",Logger.INFO);
 	private Entity currentPlayer = null;
+
+	protected ComponentMapper<PlayerComponent> mPlayer;
 
 	public PlayerSystem(){
 		logger.debug("initializing");
@@ -27,6 +29,11 @@ public class PlayerSystem extends BaseSystem implements InputProcessor {
 	}
 
 	public void setPlayer(Entity e){
+
+		if ( !mPlayer.has(e) ) {
+			e.edit().create(PlayerComponent.class);
+		}
+
 		currentPlayer = e;
 		if (e != null)
 			App.engine.systems.camera.setFollow(e);
@@ -131,5 +138,4 @@ public class PlayerSystem extends BaseSystem implements InputProcessor {
 	public boolean scrolled(int amount) {
 		return false;
 	}
-
 }

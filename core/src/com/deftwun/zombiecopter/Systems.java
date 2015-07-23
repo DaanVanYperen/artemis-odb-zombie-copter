@@ -20,6 +20,7 @@ public class Systems {
 	public DamageSystem damage = new DamageSystem();
 	public ParticleSystem particle = new ParticleSystem();
 	public VehicleSystem vehicle = new VehicleSystem();
+	public VehicleMountingSystem vehicleMounting = new VehicleMountingSystem();
 	public AgentSystem agent = new AgentSystem();
 	
 	public Systems(WorldConfiguration config){
@@ -39,6 +40,6 @@ public class Systems {
 		config.setSystem(damage);
 		config.setSystem(particle);
 		config.setSystem(vehicle);
-
+		config.setSystem(vehicleMounting);
 	}
 }

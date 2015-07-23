@@ -11,9 +11,11 @@ import com.deftwun.zombiecopter.GameEngine;
 import com.deftwun.zombiecopter.components.*;
 
 public class VehicleSystem extends EntitySystem {
+
+	private Logger logger = new Logger("VehicleSystem", Logger.INFO);
+
 	public static final Aspect.Builder VEHICLE_ASPECTS = Aspect.all(VehicleComponent.class);
 	public static final Aspect.Builder VEHICLE_OPERATOR_ASPECTS = Aspect.all(VehicleOperatorComponent.class);
-	private Logger logger = new Logger("VehicleSystem", Logger.INFO);
 
 	private Entity vehicleFly;
 	private Entity occupantFly;
@@ -29,36 +31,6 @@ public class VehicleSystem extends EntitySystem {
 		super.initialize();
 		vehicleFly = createFlyweightEntity();
 		occupantFly = createFlyweightEntity();
-	}
-
-	private void enterVehicle(Entity o, Entity v) {
-		logger.debug("Enter Vehicle");
-		GameEngine engine = App.engine;
-		ComponentMappers mappers = engine.mappers;
-
-		VehicleComponent vehicle = mappers.vehicle.get(v);
-		VehicleOperatorComponent operator = mappers.vehicleOperator.get(o);
-
-		//Vehicle takes on operator team
-		TeamComponent operatorTeam = mappers.team.get(o),
-				vehicleTeam = mappers.team.get(v);
-		if (operatorTeam != null) {
-			if (vehicleTeam == null) {
-				vehicleTeam = App.engine.createComponent(v,TeamComponent.class);
-				vehicleTeam.team = operatorTeam.team;
-			} else {
-				vehicleTeam.team = operatorTeam.team;
-			}
-		}
-
-		operator.enterVehicle = false;
-		vehicle.occupantData = App.engine.factory.serialize(o);
-		if (App.engine.systems.player.isPlayer(o)) {
-			PlayerComponent p = engine.createComponent(v,PlayerComponent.class);
-			final Entity notFlyVehicle = world.getEntity(v.id);
-			engine.systems.player.setPlayer(notFlyVehicle);
-		}
-		engine.removeEntity(o);
 	}
 
 	private void ejectOccupant(Entity e) {
@@ -103,7 +75,6 @@ public class VehicleSystem extends EntitySystem {
 		IntBag vehicles = App.engine.getEntitiesFor(VEHICLE_ASPECTS);
 
 		ejectOccupantsFromExplodingCars(vehicles);
-		enterVehicles(vehicles);
 	}
 
 	private void ejectOccupantsFromExplodingCars(IntBag vehicles) {
@@ -117,29 +88,6 @@ public class VehicleSystem extends EntitySystem {
 
 			if ((vehicle.eject && !vehicle.occupantData.equals("")) || (health != null && health.value <= 0)) {
 				ejectOccupant(vehicleFly);
-			}
-		}
-	}
-
-	private void enterVehicles(IntBag vehicles) {
-		ComponentMappers mappers = App.engine.mappers;
-		IntBag operators = App.engine.getEntitiesFor(VEHICLE_OPERATOR_ASPECTS);
-		//Operators
-		for (int oi = 0, s = operators.size(); oi < s; oi++) {
-			occupantFly.id = operators.get(oi);
-
-			final VehicleOperatorComponent operator = mappers.vehicleOperator.get(occupantFly);
-			final PhysicsComponent operatorPhysics = mappers.physics.get(occupantFly);
-
-			for (int vi = 0, s2 = vehicles.size(); vi < s2; vi++) {
-				vehicleFly.id = vehicles.get(vi);
-
-				final PhysicsComponent vehiclePhysics = mappers.physics.get(vehicleFly);
-				float vehicleRange = vehiclePhysics.getPosition().dst(operatorPhysics.getPosition());
-				if (vehicleRange <= 3 && operator.enterVehicle) {
-					enterVehicle(occupantFly, vehicleFly);
-					break;
-				}
 			}
 		}
 	}
