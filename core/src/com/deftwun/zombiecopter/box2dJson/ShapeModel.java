@@ -1,11 +1,7 @@
 package com.deftwun.zombiecopter.box2dJson;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.ChainShape;
-import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.EdgeShape;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.Shape;
+import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 
 public class ShapeModel{
@@ -37,7 +33,7 @@ public class ShapeModel{
 			break;
 			
 		case Edge:
-			assert false : "Edge shapes not supported in PhysicsComponent.ShapeModel.";
+			assert false : "Edge shapes not supported in Physics.ShapeModel.";
 			break;
 			
 		case Chain:
@@ -72,7 +68,7 @@ public class ShapeModel{
 		case Edge:
 			EdgeShape edge = new EdgeShape();
 			s = edge;
-			assert false : "Edge shapes not supported in PhysicsComponent.ShapeModel.";
+			assert false : "Edge shapes not supported in Physics.ShapeModel.";
 			break;
 			
 		case Chain:

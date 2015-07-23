@@ -13,7 +13,7 @@ import com.deftwun.zombiecopter.App;
 import com.deftwun.zombiecopter.ComponentMappers;
 import com.deftwun.zombiecopter.RayCast;
 import com.deftwun.zombiecopter.components.*;
-import com.deftwun.zombiecopter.components.TeamComponent.Team;
+import com.deftwun.zombiecopter.components.Team.TeamType;
 import net.dermetfan.gdx.physics.box2d.Box2DUtils;
 
 
@@ -25,14 +25,14 @@ public class AgentSystem extends EntityProcessingSystem {
 
 	public AgentSystem()
 	{
-		super(Aspect.all(BrainComponent.class, ControllerComponent.class, PhysicsComponent.class));
+		super(Aspect.all(Brain.class, Controller.class, Physics.class));
 		logger.debug("Initializing");
 	}
 
 	@Override
 	protected void process(Entity e) {
 		ComponentMappers mappers = App.engine.mappers;
-		BrainComponent brain = mappers.brain.get(e);
+		Brain brain = mappers.brain.get(e);
 		brain.time += world.delta;
 		if (brain.time >= brain.thinkTime){
 			brain.time = 0;
@@ -59,9 +59,9 @@ public class AgentSystem extends EntityProcessingSystem {
 		//Only pertains to walkers
 		if (!mappers.walk.has(e)) return;
 		
-		ControllerComponent controller = mappers.controller.get(e);
-		PhysicsComponent physics = mappers.physics.get(e);
-		BrainComponent brain = mappers.brain.get(e);
+		Controller controller = mappers.controller.get(e);
+		Physics physics = mappers.physics.get(e);
+		Brain brain = mappers.brain.get(e);
 		
 		World w = App.engine.systems.physics.physicsWorld;
 		controller.moveVector.nor();
@@ -87,9 +87,9 @@ public class AgentSystem extends EntityProcessingSystem {
 		//Only pertains to helicopters
 		if (!mappers.helicopter.has(e)) return;
 		
-		ControllerComponent controller = mappers.controller.get(e);
-		PhysicsComponent physics = mappers.physics.get(e);
-		BrainComponent brain = mappers.brain.get(e);
+		Controller controller = mappers.controller.get(e);
+		Physics physics = mappers.physics.get(e);
+		Brain brain = mappers.brain.get(e);
 		
 		World w = App.engine.systems.physics.physicsWorld;
 		controller.moveVector.nor();
@@ -121,20 +121,20 @@ public class AgentSystem extends EntityProcessingSystem {
 		
 	}
 
-	private boolean isEnemy(Team t1, Team t2){
+	private boolean isEnemy(TeamType t1, TeamType t2){
 		return App.engine.systems.team.getEnemies(t1).contains(t2,false);
 	}
 	
-	private boolean isFriend(Team t1, Team t2){
+	private boolean isFriend(TeamType t1, TeamType t2){
 		return t1 == t2;
 	}
 	
 	//Recognize position & velocity in space & determine where things are
 	private void updateSpacialAwareness(Entity e){
 		ComponentMappers mappers = App.engine.mappers;
-		PhysicsComponent physics = mappers.physics.get(e);
-		BrainComponent brain = mappers.brain.get(e);
-		TeamComponent team = mappers.team.get(e);
+		Physics physics = mappers.physics.get(e);
+		Brain brain = mappers.brain.get(e);
+		Team team = mappers.team.get(e);
 		
 		brain.myPosition.set(physics.getPosition());
 		brain.myVelocity.set(physics.getLinearVelocity());
@@ -150,21 +150,21 @@ public class AgentSystem extends EntityProcessingSystem {
 			
 			logger.debug("Looking around");
 			
-			Array<PhysicsComponent> visibleObjects = 
+			Array<Physics> visibleObjects =
 					App.engine.systems.physics.getPhysicsComponentsTouching(visionSensor);
 			
 			float closestEnemyRange = -1,
 				  closestFriendRange = -1,
 				  closestLeaderRange = -1;
 
-			for (PhysicsComponent physicsInSight : visibleObjects){
+			for (Physics physicsInSight : visibleObjects){
 				
 				logger.debug("Physics entity in sight");
 				Entity entityInSight = physicsInSight.ownerEntity;
-				TeamComponent teamInSight = mappers.team.get(entityInSight);
+				Team teamInSight = mappers.team.get(entityInSight);
 				
 				//Enemy
-				if (teamInSight != null && isEnemy(team.team,teamInSight.team)){
+				if (teamInSight != null && isEnemy(team.teamType,teamInSight.teamType)){
 					logger.debug("Entity is my ENEMY");
 					float distance = physicsInSight.getPosition().dst(physics.getPosition());
 					if (closestEnemyRange < 0) {
@@ -177,7 +177,7 @@ public class AgentSystem extends EntityProcessingSystem {
 				}
 				
 				//tell brain which FRIEND is closest within sight
-				else if (teamInSight != null && isFriend(team.team,teamInSight.team)){
+				else if (teamInSight != null && isFriend(team.teamType,teamInSight.teamType)){
 					logger.debug("Entity is my FRIEND");
 					
 					float distance = physicsInSight.getPosition().dst(physics.getPosition());
@@ -207,9 +207,9 @@ public class AgentSystem extends EntityProcessingSystem {
 	}
 
 	private void determineState(Entity e){
-		BrainComponent brain = App.engine.mappers.brain.get(e);
-		GunComponent gun = App.engine.mappers.gun.get(e);
-		MeleeComponent melee = App.engine.mappers.melee.get(e);
+		Brain brain = App.engine.mappers.brain.get(e);
+		Gun gun = App.engine.mappers.gun.get(e);
+		Melee melee = App.engine.mappers.melee.get(e);
 		
 		boolean enemyInSight = brain.closestEnemy != null,
 				friendInSight = brain.closestFriend != null,
@@ -253,8 +253,8 @@ public class AgentSystem extends EntityProcessingSystem {
 	}
 	
 	private void handleMovement(Entity e, float deltaTime){
-		BrainComponent brain = App.engine.mappers.brain.get(e);
-		ControllerComponent controller = App.engine.mappers.controller.get(e);
+		Brain brain = App.engine.mappers.brain.get(e);
+		Controller controller = App.engine.mappers.controller.get(e);
 		
 		switch (brain.state){
 			//PATROL only controls movement along the x axis. Helicopters might not do so well unless I figure out a way to 
@@ -289,7 +289,7 @@ public class AgentSystem extends EntityProcessingSystem {
 			}
 			
 			case ATTACK:{
-				PhysicsComponent enemyPhysics = App.engine.mappers.physics.get(brain.closestEnemy);
+				Physics enemyPhysics = App.engine.mappers.physics.get(brain.closestEnemy);
 				if (enemyPhysics == null) break;
 				
 				//Look at enemy
@@ -315,7 +315,7 @@ public class AgentSystem extends EntityProcessingSystem {
 			}	
 			
 			case FLEE:{
-				PhysicsComponent enemyPhysics = App.engine.mappers.physics.get(brain.closestEnemy);
+				Physics enemyPhysics = App.engine.mappers.physics.get(brain.closestEnemy);
 				if (enemyPhysics == null) break;
 				
 				//Run away
@@ -328,7 +328,7 @@ public class AgentSystem extends EntityProcessingSystem {
 			}	
 			
 			case FOLLOW:{
-				PhysicsComponent leaderPhysics = App.engine.mappers.physics.get(brain.closestLeader);
+				Physics leaderPhysics = App.engine.mappers.physics.get(brain.closestLeader);
 				if (leaderPhysics == null) break;
 				
 				//Don't move if we're within desiredRange +- rangeTolerance
@@ -359,15 +359,15 @@ public class AgentSystem extends EntityProcessingSystem {
 		
 		logger.debug("Handle weapons");
 		
-		BrainComponent brain = mappers.brain.get(e);
-		ControllerComponent controller = mappers.controller.get(e);
-		PhysicsComponent physics = mappers.physics.get(e);
+		Brain brain = mappers.brain.get(e);
+		Controller controller = mappers.controller.get(e);
+		Physics physics = mappers.physics.get(e);
 		
 		switch (brain.state){
 		
 			case ATTACK:{
 				World w = App.engine.systems.physics.physicsWorld;
-				PhysicsComponent enemyPhysics = mappers.physics.get(brain.closestEnemy);
+				Physics enemyPhysics = mappers.physics.get(brain.closestEnemy);
 				boolean clearShot = rayCast.cast(w,physics,enemyPhysics),
 						inRange = brain.myPosition.dst(enemyPhysics.getPosition()) <= brain.desiredRange;
 				logger.debug("Attacking? "+(inRange && clearShot) + " because ; inRange=" + inRange + " ; clearShot=" + clearShot);

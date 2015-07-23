@@ -18,7 +18,7 @@ public class PlayerSystem extends BaseSystem implements InputProcessor {
 	private Logger logger = new Logger("PlayerSystem",Logger.INFO);
 	private Entity currentPlayer = null;
 
-	protected ComponentMapper<PlayerComponent> mPlayer;
+	protected ComponentMapper<Player> mPlayer;
 
 	public PlayerSystem(){
 		logger.debug("initializing");
@@ -31,7 +31,7 @@ public class PlayerSystem extends BaseSystem implements InputProcessor {
 	public void setPlayer(Entity e){
 
 		if ( !mPlayer.has(e) ) {
-			e.edit().create(PlayerComponent.class);
+			e.edit().create(Player.class);
 		}
 
 		currentPlayer = e;
@@ -49,8 +49,8 @@ public class PlayerSystem extends BaseSystem implements InputProcessor {
 
 		if (currentPlayer == null) return;
 		ComponentMappers mappers = App.engine.mappers;
-		ControllerComponent controller = mappers.controller.get(currentPlayer);
-		PhysicsComponent physics = mappers.physics.get(currentPlayer);
+		Controller controller = mappers.controller.get(currentPlayer);
+		Physics physics = mappers.physics.get(currentPlayer);
 
 		//Set entity controller inputs
 		if (controller == null) return;
@@ -88,8 +88,8 @@ public class PlayerSystem extends BaseSystem implements InputProcessor {
 		if (keycode == Keys.E){
 			//TODO: this shoudl be driven by tghe 'action' switch in the controller component
 			logger.debug("Vehicle Key pressed");
-			VehicleComponent vehicle = App.engine.mappers.vehicle.get(currentPlayer);
-			VehicleOperatorComponent operator = App.engine.mappers.vehicleOperator.get(currentPlayer);
+			Vehicle vehicle = App.engine.mappers.vehicle.get(currentPlayer);
+			VehicleOperator operator = App.engine.mappers.vehicleOperator.get(currentPlayer);
 			if (vehicle != null) vehicle.eject = true;
 			if (operator != null) operator.enterVehicle = true;
 		}
@@ -101,8 +101,8 @@ public class PlayerSystem extends BaseSystem implements InputProcessor {
 		if (currentPlayer == null) return false;
 		if (keycode == Keys.E){
 			logger.debug("Vehicle Key depressed");
-			VehicleComponent vehicle = App.engine.mappers.vehicle.get(currentPlayer);
-			VehicleOperatorComponent operator = App.engine.mappers.vehicleOperator.get(currentPlayer);
+			Vehicle vehicle = App.engine.mappers.vehicle.get(currentPlayer);
+			VehicleOperator operator = App.engine.mappers.vehicleOperator.get(currentPlayer);
 			if (vehicle != null) vehicle.eject = false;
 			if (operator != null) operator.enterVehicle = false;
 		}

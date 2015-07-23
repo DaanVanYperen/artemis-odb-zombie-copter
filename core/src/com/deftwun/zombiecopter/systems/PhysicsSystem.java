@@ -11,9 +11,9 @@ import com.badlogic.gdx.utils.Logger;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.deftwun.zombiecopter.App;
 import com.deftwun.zombiecopter.box2dJson.PhysicsScene.PhysicsSceneListener;
-import com.deftwun.zombiecopter.components.HealthComponent;
-import com.deftwun.zombiecopter.components.PhysicsComponent;
-import com.deftwun.zombiecopter.components.StickyComponent;
+import com.deftwun.zombiecopter.components.Health;
+import com.deftwun.zombiecopter.components.Physics;
+import com.deftwun.zombiecopter.components.Sticky;
 
 public class PhysicsSystem extends EntityProcessingSystem implements ContactListener, PhysicsSceneListener {
  	
@@ -25,24 +25,24 @@ public class PhysicsSystem extends EntityProcessingSystem implements ContactList
 	//Collision Maps
 	private ObjectMap<Fixture,Array<Fixture>> fixture_fixtures_map = new ObjectMap<Fixture,Array<Fixture>>();
 	private ObjectMap<Fixture,Array<Body>> fixture_bodies_map = new ObjectMap<Fixture,Array<Body>>();
-	private ObjectMap<Fixture,Array<PhysicsComponent>> fixture_physics_map = new ObjectMap<Fixture,Array<PhysicsComponent>>();
+	private ObjectMap<Fixture,Array<Physics>> fixture_physics_map = new ObjectMap<Fixture,Array<Physics>>();
 	private ObjectMap<Body,Array<Fixture>> body_fixtures_map = new ObjectMap<Body,Array<Fixture>>();
 	private ObjectMap<Body,Array<Body>> body_bodies_map = new ObjectMap<Body,Array<Body>>();
-	private ObjectMap<Body,Array<PhysicsComponent>> body_physics_map = new ObjectMap<Body,Array<PhysicsComponent>>();
-	private ObjectMap<PhysicsComponent,Array<Fixture>> physics_fixtures_map = new ObjectMap<PhysicsComponent,Array<Fixture>>();
-	private ObjectMap<PhysicsComponent,Array<Body>> physics_bodies_map = new ObjectMap<PhysicsComponent,Array<Body>>();
-	private ObjectMap<PhysicsComponent,Array<PhysicsComponent>> physics_physics_map = new ObjectMap<PhysicsComponent,Array<PhysicsComponent>>();
+	private ObjectMap<Body,Array<Physics>> body_physics_map = new ObjectMap<Body,Array<Physics>>();
+	private ObjectMap<Physics,Array<Fixture>> physics_fixtures_map = new ObjectMap<Physics,Array<Fixture>>();
+	private ObjectMap<Physics,Array<Body>> physics_bodies_map = new ObjectMap<Physics,Array<Body>>();
+	private ObjectMap<Physics,Array<Physics>> physics_physics_map = new ObjectMap<Physics,Array<Physics>>();
 	
 	//Collision Methods
 	public Array<Fixture> getFixturesTouching(Fixture f){if (f==null) return null; return fixture_fixtures_map.get(f,null);}
 	public Array<Fixture> getFixturesTouching(Body b){if (b==null) return null; return body_fixtures_map.get(b,null);}
-	public Array<Fixture> getFixturesTouching(PhysicsComponent p){if (p==null) return null;return physics_fixtures_map.get(p,null);}
+	public Array<Fixture> getFixturesTouching(Physics p){if (p==null) return null;return physics_fixtures_map.get(p,null);}
 	public Array<Body> getBodiesTouching(Fixture f){if (f==null) return null;return fixture_bodies_map.get(f,null);}
 	public Array<Body> getBodiesTouching(Body b){if (b==null) return null;return body_bodies_map.get(b,null);}
-	public Array<Body> getBodiesTouching(PhysicsComponent p){if (p==null) return null;return physics_bodies_map.get(p,null);}
-	public Array<PhysicsComponent> getPhysicsComponentsTouching(Fixture f){if (f==null) return null;return fixture_physics_map.get(f,null);}
-	public Array<PhysicsComponent> getPhysicsComponentsTouching(Body b){if (b==null) return null;return body_physics_map.get(b,null);}
-	public Array<PhysicsComponent> getPhysicsComponentsTouching(PhysicsComponent p){if (p==null) return null;return physics_physics_map.get(p,null);}
+	public Array<Body> getBodiesTouching(Physics p){if (p==null) return null;return physics_bodies_map.get(p,null);}
+	public Array<Physics> getPhysicsComponentsTouching(Fixture f){if (f==null) return null;return fixture_physics_map.get(f,null);}
+	public Array<Physics> getPhysicsComponentsTouching(Body b){if (b==null) return null;return body_physics_map.get(b,null);}
+	public Array<Physics> getPhysicsComponentsTouching(Physics p){if (p==null) return null;return physics_physics_map.get(p,null);}
 		
 	public int getContactCount(Fixture f){	
 		if (f == null) return 0;
@@ -54,7 +54,7 @@ public class PhysicsSystem extends EntityProcessingSystem implements ContactList
 		Array<Fixture> list = body_fixtures_map.get(b,null);
 		return (list == null) ? 0 : list.size;
 	}
-	public int getContactCount(PhysicsComponent p){
+	public int getContactCount(Physics p){
 		if (p == null) return 0;
 		Array<Fixture> list = physics_fixtures_map.get(p,null);
 		return (list == null) ? 0 : list.size;
@@ -62,7 +62,7 @@ public class PhysicsSystem extends EntityProcessingSystem implements ContactList
 	
 	@SuppressWarnings("unchecked")
 	public PhysicsSystem(){
-		super(Aspect.all(PhysicsComponent.class));
+		super(Aspect.all(Physics.class));
 		logger.debug("initializing");
 		physicsWorld = new World(new Vector2(0,gravity),true);
 		physicsWorld.setContactListener(this);
@@ -75,9 +75,9 @@ public class PhysicsSystem extends EntityProcessingSystem implements ContactList
 
 	@Override
 	protected void process(Entity entity) {
-		PhysicsComponent physics = App.engine.mappers.physics.get(entity);
-		HealthComponent health = App.engine.mappers.health.get(entity);
-		StickyComponent sticky = App.engine.mappers.sticky.get(entity);
+		Physics physics = App.engine.mappers.physics.get(entity);
+		Health health = App.engine.mappers.health.get(entity);
+		Sticky sticky = App.engine.mappers.sticky.get(entity);
 		
 		float collisionForce = physics.getCollisionNormal();
 		
@@ -134,11 +134,11 @@ public class PhysicsSystem extends EntityProcessingSystem implements ContactList
 			    fixB = contact.getFixtureB();
 		Body bodyA = fixA.getBody(), 
 			 bodyB = fixB.getBody();
-        PhysicsComponent physA = (PhysicsComponent)bodyA.getUserData(), 
-                         physB = (PhysicsComponent)bodyB.getUserData();
+        Physics physA = (Physics)bodyA.getUserData(),
+                         physB = (Physics)bodyB.getUserData();
 		
 		if ((physA == null) || (physB == null)) {logger.error("BEGIN CONTACT - Physics component is null"); return;}
-		if (bodyA.getUserData() == physB || bodyB.getUserData() == physA) {logger.debug("BEGIN CONTACT - ignore PhysicsComponent self collisions"); return;}
+		if (bodyA.getUserData() == physB || bodyB.getUserData() == physA) {logger.debug("BEGIN CONTACT - ignore Physics self collisions"); return;}
 		logger.debug("Begin contact between Entity #" + physA.ownerEntity.getId() + " & #" + physB.ownerEntity.getId());
 		
 		if (!fixA.isSensor() && !fixB.isSensor()){
@@ -179,11 +179,11 @@ public class PhysicsSystem extends EntityProcessingSystem implements ContactList
 			    fixB = contact.getFixtureB();
 		Body bodyA = fixA.getBody(), 
 			 bodyB = fixB.getBody();
-        PhysicsComponent physA = (PhysicsComponent)bodyA.getUserData(), 
-                         physB = (PhysicsComponent)bodyB.getUserData();
+        Physics physA = (Physics)bodyA.getUserData(),
+                         physB = (Physics)bodyB.getUserData();
         
 		if ((physA == null) || (physB == null)) {logger.error("Physics component is null"); return;}
-		if (bodyA.getUserData() == physB || bodyB.getUserData() == physA) {logger.debug("END CONTACT - ignore PhysicsComponent self collisions."); return;}
+		if (bodyA.getUserData() == physB || bodyB.getUserData() == physA) {logger.debug("END CONTACT - ignore Physics self collisions."); return;}
 		logger.debug("End contact between Entity #" + physA.ownerEntity.getId() + " & #" + physB.ownerEntity.getId());
 		
 		if (fixture_fixtures_map.get(fixA) == null || fixture_fixtures_map.get(fixB) == null){
@@ -222,8 +222,8 @@ public class PhysicsSystem extends EntityProcessingSystem implements ContactList
     @Override
     public void postSolve(Contact contact, ContactImpulse impulse) {
         Body bodyA = contact.getFixtureA().getBody(), bodyB = contact.getFixtureB().getBody();
-        PhysicsComponent physA = (PhysicsComponent)bodyA.getUserData(), 
-                         physB = (PhysicsComponent)bodyB.getUserData();
+        Physics physA = (Physics)bodyA.getUserData(),
+                         physB = (Physics)bodyB.getUserData();
         if (physA == null || physB == null) return;
         physA.addCollisionNormal(impulse.getNormalImpulses()[0]);
         physB.addCollisionNormal(impulse.getNormalImpulses()[0]);
@@ -234,7 +234,7 @@ public class PhysicsSystem extends EntityProcessingSystem implements ContactList
 	@Override
 	public void inserted(Entity entity) {
 		logger.debug("Entity added: " + entity.getId());
-		PhysicsComponent physics = App.engine.mappers.physics.get(entity);
+		Physics physics = App.engine.mappers.physics.get(entity);
 		if (physics == null) return;
 		physics.ownerEntity = entity;
 		this.physicsAdded(physics);
@@ -243,18 +243,18 @@ public class PhysicsSystem extends EntityProcessingSystem implements ContactList
 	@Override
 	public void removed(Entity entity) {
 		logger.debug("Entity removed: " + entity.getId());
-		PhysicsComponent physics = App.engine.mappers.physics.get(entity);
+		Physics physics = App.engine.mappers.physics.get(entity);
 		if (physics == null) return;
 		physics.destroy();
 		this.physicsRemoved(physics);
 	}
 
 	//Should be called when a new physics component is created
-	public void physicsAdded(PhysicsComponent physics){
+	public void physicsAdded(Physics physics){
 		logger.debug("Physics Component added");
 		physics_fixtures_map.put(physics,new Array<Fixture>());
 		physics_bodies_map.put(physics,new Array<Body>());
-		physics_physics_map.put(physics,new Array<PhysicsComponent>());
+		physics_physics_map.put(physics,new Array<Physics>());
 	}
 	
 	//Should be called when a new fixture is created
@@ -264,7 +264,7 @@ public class PhysicsSystem extends EntityProcessingSystem implements ContactList
 		logger.debug("Fixture_Fixture_Map size = " + fixture_fixtures_map.size);
 		fixture_fixtures_map.put(fixture,new Array<Fixture>());
 		fixture_bodies_map.put(fixture,new Array<Body>());
-		fixture_physics_map.put(fixture,new Array<PhysicsComponent>());
+		fixture_physics_map.put(fixture,new Array<Physics>());
 	}
 	
 	//Should be called when a new body is created
@@ -273,11 +273,11 @@ public class PhysicsSystem extends EntityProcessingSystem implements ContactList
 		logger.debug("Body Added");
 		body_fixtures_map.put(body,new Array<Fixture>());
 		body_bodies_map.put(body,new Array<Body>());
-		body_physics_map.put(body,new Array<PhysicsComponent>());
+		body_physics_map.put(body,new Array<Physics>());
 	}
 	
 	//Should be called when an existing physics component is destroyed
-	public void physicsRemoved(PhysicsComponent physics){
+	public void physicsRemoved(Physics physics){
 		logger.debug("Physics Component Removed");
 		physics_fixtures_map.remove(physics);
 		physics_bodies_map.remove(physics);

@@ -8,7 +8,7 @@ import com.deftwun.zombiecopter.App;
 import com.deftwun.zombiecopter.ComponentMappers;
 import com.deftwun.zombiecopter.DropOffPoint;
 import com.deftwun.zombiecopter.components.Collector;
-import com.deftwun.zombiecopter.components.PhysicsComponent;
+import com.deftwun.zombiecopter.components.Physics;
 
 
 //Drop off points are areas that an entity with a 'collector' component can drop off civilians when within range. 
@@ -34,7 +34,7 @@ public class CivilianDropOffSystem extends EntityProcessingSystem {
 		final ComponentMappers maps = App.engine.mappers;
 		for (DropOffPoint point : points){
 			Collector c = maps.collector.get(e);
-			PhysicsComponent phys = maps.physics.get(e);
+			Physics phys = maps.physics.get(e);
 			if (phys.getPosition().dst(point.position) < point.range){
 				totalCivsReturned += c.civilians;
 				c.civilians = 0;

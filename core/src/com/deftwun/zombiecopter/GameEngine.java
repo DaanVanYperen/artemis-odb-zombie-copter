@@ -98,7 +98,7 @@ public class GameEngine{
 	public void test_deserializeBug(Vector2 pos){
 		/*
 		Entity e = factory.build("jeep",pos);
-		PhysicsComponent p = mappers.physics.get(e);
+		Physics p = mappers.physics.get(e);
 		WheelJoint j = (WheelJoint) p.getJoint("leftWheelJoint");
 		logger.debug("Factory \n anchorA: " + j.getAnchorA() + "\n anchorB:" + j.getAnchorB() + " \n localAxis: "+ j.getLocalAxisA() + " \n damping: " + j.getSpringDampingRatio() + "\n frequency" + j.getSpringFrequencyHz());
 

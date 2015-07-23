@@ -18,7 +18,7 @@ public class WeaponSystem extends EntityProcessingSystem {
 	
 	@SuppressWarnings("unchecked")
 	public WeaponSystem(){
-		super(Aspect.one(GunComponent.class, MeleeComponent.class));
+		super(Aspect.one(Gun.class, Melee.class));
 		logger.debug("initializing");
 	}
 	
@@ -26,10 +26,10 @@ public class WeaponSystem extends EntityProcessingSystem {
 	protected void process(Entity entity) {
 		
 		ComponentMappers mappers = App.engine.mappers;
-		PhysicsComponent physics = mappers.physics.get(entity);
-		GunComponent gun = mappers.gun.get(entity);
-		MeleeComponent melee = mappers.melee.get(entity);
-		ControllerComponent controller = mappers.controller.get(entity);
+		Physics physics = mappers.physics.get(entity);
+		Gun gun = mappers.gun.get(entity);
+		Melee melee = mappers.melee.get(entity);
+		Controller controller = mappers.controller.get(entity);
 		
 		//Shoot Gun
 		if (gun != null){
@@ -45,11 +45,11 @@ public class WeaponSystem extends EntityProcessingSystem {
 				Entity bulletEntity = App.engine.factory.build(gun.projectileName,pos,vel,controller.lookVector.angle());
 				if (bulletEntity != null){
 					//Time to live
-					TimeToLiveComponent ttl = App.engine.createComponent(bulletEntity,TimeToLiveComponent.class);
+					TimeToLive ttl = App.engine.createComponent(bulletEntity,TimeToLive.class);
 					ttl.timeLimit = gun.range / gun.bulletSpeed;
 					
 					//Parent 
-					ChildComponent child = App.engine.createComponent(bulletEntity,ChildComponent.class);
+					Child child = App.engine.createComponent(bulletEntity,Child.class);
 					child.parentEntity = entity;
 				
 					gun.time = 0;

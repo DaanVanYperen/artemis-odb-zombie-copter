@@ -6,17 +6,17 @@ import com.artemis.systems.EntityProcessingSystem;
 import com.badlogic.gdx.utils.Logger;
 import com.deftwun.zombiecopter.App;
 import com.deftwun.zombiecopter.ComponentMappers;
-import com.deftwun.zombiecopter.components.HealthComponent;
-import com.deftwun.zombiecopter.components.PhysicsComponent;
-import com.deftwun.zombiecopter.components.TimeToLiveComponent;
+import com.deftwun.zombiecopter.components.Health;
+import com.deftwun.zombiecopter.components.Physics;
+import com.deftwun.zombiecopter.components.TimeToLive;
 
 public class LifetimeSystem extends EntityProcessingSystem {
 	private Logger logger = new Logger("LifeTimeSystem",Logger.INFO);
 	
 	@SuppressWarnings("unchecked")
 	public LifetimeSystem() {
-		super(Aspect.all(PhysicsComponent.class)
-				    .one(HealthComponent.class,TimeToLiveComponent.class));
+		super(Aspect.all(Physics.class)
+				    .one(Health.class,TimeToLive.class));
 		logger.debug("initializing");
 	}		
 
@@ -24,7 +24,7 @@ public class LifetimeSystem extends EntityProcessingSystem {
 	protected void process(Entity entity) {
 		
 		ComponentMappers mappers = App.engine.mappers;
-		TimeToLiveComponent timeToLive = mappers.timeToLive.get(entity);
+		TimeToLive timeToLive = mappers.timeToLive.get(entity);
 	
 		//Time to live (expiration)
 		if (timeToLive != null){

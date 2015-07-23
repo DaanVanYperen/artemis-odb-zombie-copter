@@ -3,7 +3,6 @@ package com.deftwun.zombiecopter.systems;
 import com.artemis.Aspect;
 import com.artemis.Entity;
 import com.artemis.systems.EntityProcessingSystem;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -13,37 +12,37 @@ import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectSet;
 import com.deftwun.zombiecopter.App;
 import com.deftwun.zombiecopter.SpriteLayer;
-import com.deftwun.zombiecopter.components.PhysicsComponent;
-import com.deftwun.zombiecopter.components.SpriteComponent;
+import com.deftwun.zombiecopter.components.Physics;
+import com.deftwun.zombiecopter.components.Sprite;
 
 public class SpriteRenderSystem extends EntityProcessingSystem {
 	private Logger logger;
 	private int LOG_LEVEL = Logger.INFO;
 	
 	private SpriteBatch batch;
-	private ObjectMap<SpriteLayer,ObjectSet<Sprite>> spriteLayers = new ObjectMap<SpriteLayer,ObjectSet<Sprite>>();
+	private ObjectMap<SpriteLayer,ObjectSet<com.badlogic.gdx.graphics.g2d.Sprite>> spriteLayers = new ObjectMap<SpriteLayer,ObjectSet<com.badlogic.gdx.graphics.g2d.Sprite>>();
 	//private SpriteLayer[] layerNames = SpriteLayer.values();
 	
 	@SuppressWarnings("unchecked")
 	public SpriteRenderSystem() {		
-		super(Aspect.all(PhysicsComponent.class, SpriteComponent.class));
+		super(Aspect.all(Physics.class, Sprite.class));
 		logger = new Logger("SpriteRenderSystem",LOG_LEVEL);
 		logger.debug("initializing");
 		batch = new SpriteBatch();
 		for (SpriteLayer l : SpriteLayer.values()){
-			spriteLayers.put(l, new ObjectSet<Sprite>());
+			spriteLayers.put(l, new ObjectSet<com.badlogic.gdx.graphics.g2d.Sprite>());
 		}
 	}
 	
 	@Override
 	protected void process(Entity entity) {
-		SpriteComponent spriteCom = App.engine.mappers.sprite.get(entity);
-		PhysicsComponent physics = App.engine.mappers.physics.get(entity);
+		Sprite spriteCom = App.engine.mappers.sprite.get(entity);
+		Physics physics = App.engine.mappers.physics.get(entity);
 		
 		Vector2 pixelPosition;
 		float angleDegrees;
 				
-		for (ObjectMap.Entry<String,Sprite> entry: spriteCom.spriteMap.entries()){
+		for (ObjectMap.Entry<String, com.badlogic.gdx.graphics.g2d.Sprite> entry: spriteCom.spriteMap.entries()){
 			Body b = physics.getBody(entry.key);
 			if (b == null){
 				pixelPosition = physics.getPosition().scl(App.engine.PIXELS_PER_METER);
@@ -54,7 +53,7 @@ public class SpriteRenderSystem extends EntityProcessingSystem {
 				angleDegrees = b.getAngle() * MathUtils.radDeg;
 			}
 	
-			Sprite s = entry.value;
+			com.badlogic.gdx.graphics.g2d.Sprite s = entry.value;
 			s.setCenter(pixelPosition.x,pixelPosition.y);
 			s.setRotation(angleDegrees);
 			//s.setFlip(spriteCom.flipX,spriteCom.flipY);
@@ -68,7 +67,7 @@ public class SpriteRenderSystem extends EntityProcessingSystem {
 		batch.begin();
 		
 		for (SpriteLayer l : SpriteLayer.values()){
-			for (Sprite s : spriteLayers.get(l)){
+			for (com.badlogic.gdx.graphics.g2d.Sprite s : spriteLayers.get(l)){
 				//Camera Culling
 				float spriteRadius = s.getWidth() < s.getHeight() ? s.getHeight() : s.getWidth();
 				if (App.engine.systems.camera.getCamera().frustum.sphereInFrustum(s.getX(), s.getY(), 0, spriteRadius))
@@ -80,20 +79,20 @@ public class SpriteRenderSystem extends EntityProcessingSystem {
 
 	@Override
 	public void inserted(Entity entity) {
-		SpriteComponent spriteCom = App.engine.mappers.sprite.get(entity);
+		Sprite spriteCom = App.engine.mappers.sprite.get(entity);
 		if (spriteCom == null) return;
-		logger.debug("SpriteComponent added " + entity);
-		for (Sprite s : spriteCom.spriteMap.values()){
+		logger.debug("Sprite added " + entity);
+		for (com.badlogic.gdx.graphics.g2d.Sprite s : spriteCom.spriteMap.values()){
 			spriteLayers.get(spriteCom.layer).add(s);
 		}
 	}
 
 	@Override
 	public void removed(Entity entity) {
-		SpriteComponent spriteCom = App.engine.mappers.sprite.get(entity);
+		Sprite spriteCom = App.engine.mappers.sprite.get(entity);
 		if (spriteCom == null) return;
-		logger.debug("SpriteComponent removed " + entity);
-		for (Sprite s : spriteCom.spriteMap.values()){
+		logger.debug("Sprite removed " + entity);
+		for (com.badlogic.gdx.graphics.g2d.Sprite s : spriteCom.spriteMap.values()){
 			spriteLayers.get(spriteCom.layer).remove(s);
 		}
 	}

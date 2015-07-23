@@ -1,17 +1,17 @@
 package com.deftwun.zombiecopter;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
-import com.deftwun.zombiecopter.components.PhysicsComponent;
-import com.badlogic.gdx.math.Vector2;
+import com.deftwun.zombiecopter.components.Physics;
 
 public class RayCast implements RayCastCallback{
 	
 	public Fixture fixture = null;	
 	public Body body = null;
-	public PhysicsComponent physics = null;
+	public Physics physics = null;
 	public Vector2 point = new Vector2(),
 				   normal = new Vector2();
 	private Vector2 tmp1 = new Vector2(),
@@ -30,21 +30,21 @@ public class RayCast implements RayCastCallback{
 		return cast(world,p1,tmp2);
 	}
 	
-	public boolean cast(World world,PhysicsComponent phys0, PhysicsComponent phys1){
+	public boolean cast(World world,Physics phys0, Physics phys1){
 		reset();
 		if (phys0.getPosition().dst(phys1.getPosition()) <= 0) return true;
 		world.rayCast(this, phys0.getPosition(), phys1.getPosition());
 		return fixture != null && physics == phys1;
 	}
 	
-	public boolean cast(World world,PhysicsComponent phys0, Vector2 p1){
+	public boolean cast(World world,Physics phys0, Vector2 p1){
 		reset();
 		if (phys0.getPosition().dst(p1) <= 0) return true;
 		world.rayCast(this, phys0.getPosition(), p1);
 		return fixture == null;
 	}
 	
-	public boolean cast(World world, Vector2 p1,PhysicsComponent phys2) {
+	public boolean cast(World world, Vector2 p1,Physics phys2) {
 		reset();
 		return cast(world,p1,phys2.getPosition());
 	}
@@ -60,7 +60,7 @@ public class RayCast implements RayCastCallback{
 		if (f.isSensor() && ignoreSensors) return -1;
 		fixture = f;
 		body = f.getBody();
-		physics = (PhysicsComponent)body.getUserData();
+		physics = (Physics)body.getUserData();
 		point = p;
 		normal = n;
 		fraction = fra;

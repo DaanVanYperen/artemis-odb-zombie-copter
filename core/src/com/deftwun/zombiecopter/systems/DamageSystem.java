@@ -24,15 +24,15 @@ public class DamageSystem extends EntityProcessingSystem{
 
 	@SuppressWarnings("unchecked")
 	public DamageSystem() {
-		super(Aspect.all(BulletComponent.class));
+		super(Aspect.all(Bullet.class));
 		logger.debug("initializing");
 	}
 
 	public void death(Entity entity){
 	
         ComponentMappers mappers = App.engine.mappers;
-        PhysicsComponent physics = mappers.physics.get(entity);
-        HealthComponent health = mappers.health.get(entity);	
+        Physics physics = mappers.physics.get(entity);
+        Health health = mappers.health.get(entity);
 
 		if (!health.isDead){
 			health.isDead = true;
@@ -67,20 +67,20 @@ public class DamageSystem extends EntityProcessingSystem{
 				final Bag<Component> components = entity.getComponents(componentsTmp);
 				for (int i = components.size()-1; i > 0; i--) {
 					final Component c = components.get(i);
-					if (!(c instanceof PhysicsComponent) &&
-						!(c instanceof TimeToLiveComponent) &&
-						!(c instanceof SpriteComponent) && 
-						!(c instanceof HealthComponent) &&
-						!(c instanceof PlayerComponent) && 
-						!(c instanceof LookComponent))
+					if (!(c instanceof Physics) &&
+						!(c instanceof TimeToLive) &&
+						!(c instanceof Sprite) &&
+						!(c instanceof Health) &&
+						!(c instanceof Player) &&
+						!(c instanceof Look))
 					{ 
 						entity.edit().remove(c);
 					}
 				}
 				
 				//Set Time to live
-				TimeToLiveComponent ttl = mappers.timeToLive.get(entity);
-				if (ttl == null) ttl = App.engine.createComponent(entity,TimeToLiveComponent.class);
+				TimeToLive ttl = mappers.timeToLive.get(entity);
+				if (ttl == null) ttl = App.engine.createComponent(entity,TimeToLive.class);
 				ttl.time = 0;
 				ttl.timeLimit = deadEntityTimeLimit;
 				logger.debug("  ..countdown to removal (timeToLive) = " + ttl.timeLimit + " seconds.");
@@ -104,8 +104,8 @@ public class DamageSystem extends EntityProcessingSystem{
 	}
 	
 	public void dealDamage(Entity dealer, Entity target, float dmg, float angle){
-		HealthComponent h = App.engine.mappers.health.get(target);
-		PhysicsComponent p = App.engine.mappers.physics.get(target);
+		Health h = App.engine.mappers.health.get(target);
+		Physics p = App.engine.mappers.physics.get(target);
 		
 		if (h == null) return;
 		if (p != null) App.engine.systems.particle.addEffect(h.damageEffect, p.getPosition(),angle);
@@ -125,9 +125,9 @@ public class DamageSystem extends EntityProcessingSystem{
 	@Override
 	protected void process(Entity entity) {
 		
-		PhysicsComponent physics = App.engine.mappers.physics.get(entity);
-		BulletComponent bullet = App.engine.mappers.bullet.get(entity);
-		ChildComponent child = App.engine.mappers.child.get(entity);
+		Physics physics = App.engine.mappers.physics.get(entity);
+		Bullet bullet = App.engine.mappers.bullet.get(entity);
+		Child child = App.engine.mappers.child.get(entity);
 		
 		//Iterate over all touching fixtures, checking to see if they have 
 		// health, and deal damage as necessary
@@ -135,7 +135,7 @@ public class DamageSystem extends EntityProcessingSystem{
 		for (Fixture f : fixturesTouching){
 			//Should have no effect on sensors
 			if (f.isSensor()) continue;
-			PhysicsComponent p = (PhysicsComponent) f.getBody().getUserData();
+			Physics p = (Physics) f.getBody().getUserData();
 			if (p == null) continue;
 			Entity dealer = (child == null) ? entity : child.parentEntity;
 			dealDamage(dealer,p.ownerEntity,bullet.damage,physics.getRotation());
@@ -144,7 +144,7 @@ public class DamageSystem extends EntityProcessingSystem{
 		//disable bullet after colliding with anything
 		if (physics.getCollisionNormal() > 0) {
 			physics.setFilter(CollisionBits.Effects, CollisionBits.Mask_Effects);
-			entity.edit().remove(BulletComponent.class);
+			entity.edit().remove(Bullet.class);
 			//logger.debug("Entity #" + entity.getId() + ": damage disabled");
 		}	
 	}

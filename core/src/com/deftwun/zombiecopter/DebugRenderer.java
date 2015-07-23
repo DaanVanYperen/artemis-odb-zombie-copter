@@ -14,8 +14,8 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
-import com.deftwun.zombiecopter.components.HealthComponent;
-import com.deftwun.zombiecopter.components.PhysicsComponent;
+import com.deftwun.zombiecopter.components.Health;
+import com.deftwun.zombiecopter.components.Physics;
 
 public class DebugRenderer{
 
@@ -64,8 +64,8 @@ public class DebugRenderer{
 		
         Entity plyr = systems.player.getPlayer();
         if (plyr == null) return;
-        PhysicsComponent p = mappers.physics.get(plyr);
-        HealthComponent h = mappers.health.get(plyr);
+        Physics p = mappers.physics.get(plyr);
+        Health h = mappers.health.get(plyr);
          
         infoString = String.format("FPS: %d \nEntities: %d \n",
         										Gdx.graphics.getFramesPerSecond(),

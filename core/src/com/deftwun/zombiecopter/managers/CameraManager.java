@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Logger;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.deftwun.zombiecopter.App;
-import com.deftwun.zombiecopter.components.PhysicsComponent;
+import com.deftwun.zombiecopter.components.Physics;
 
 public class CameraManager extends Manager {
 
@@ -20,7 +20,7 @@ public class CameraManager extends Manager {
 	private ExtendViewport viewport;
 	private OrthographicCamera camera;
 	private Entity targetObject;
-	private PhysicsComponent targetPhysics;
+	private Physics targetPhysics;
 	private Rectangle camRect;
 
 	@Override

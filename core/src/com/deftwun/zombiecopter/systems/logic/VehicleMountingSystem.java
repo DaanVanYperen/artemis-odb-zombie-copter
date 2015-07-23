@@ -6,10 +6,10 @@ import com.artemis.Entity;
 import com.artemis.annotations.Wire;
 import com.badlogic.gdx.utils.Logger;
 import com.deftwun.zombiecopter.App;
-import com.deftwun.zombiecopter.components.PhysicsComponent;
-import com.deftwun.zombiecopter.components.TeamComponent;
-import com.deftwun.zombiecopter.components.VehicleComponent;
-import com.deftwun.zombiecopter.components.VehicleOperatorComponent;
+import com.deftwun.zombiecopter.components.Physics;
+import com.deftwun.zombiecopter.components.Team;
+import com.deftwun.zombiecopter.components.Vehicle;
+import com.deftwun.zombiecopter.components.VehicleOperator;
 import net.mostlyoriginal.api.system.core.DualEntityProcessingSystem;
 
 /**
@@ -22,18 +22,18 @@ public class VehicleMountingSystem extends DualEntityProcessingSystem {
 
 	private Logger logger = new Logger("VehicleMountingSystem", Logger.INFO);
 
-	private ComponentMapper<VehicleOperatorComponent> mVehicleOperator;
-	private ComponentMapper<VehicleComponent> mVehicle;
-	private ComponentMapper<PhysicsComponent> mPhysics;
-	protected ComponentMapper<TeamComponent> mTeam;
+	private ComponentMapper<VehicleOperator> mVehicleOperator;
+	private ComponentMapper<Vehicle> mVehicle;
+	private ComponentMapper<Physics> mPhysics;
+	protected ComponentMapper<Team> mTeam;
 
 	public VehicleMountingSystem() {
-		super(Aspect.all(VehicleComponent.class), Aspect.all(VehicleOperatorComponent.class));
+		super(Aspect.all(Vehicle.class), Aspect.all(VehicleOperator.class));
 	}
 
 	@Override
 	protected void process(Entity vehicle, Entity operator) {
-		final VehicleOperatorComponent vehicleOperator = this.mVehicleOperator.get(operator);
+		final VehicleOperator vehicleOperator = this.mVehicleOperator.get(operator);
 		if (vehicleOperator.enterVehicle) {
 			if (withinRange(vehicle, operator)) {
 				enterVehicle(operator, vehicle);
@@ -46,8 +46,8 @@ public class VehicleMountingSystem extends DualEntityProcessingSystem {
 	}
 
 	private float distance(Entity vehicle, Entity operator) {
-		final PhysicsComponent operatorPhysics = mPhysics.get(operator);
-		final PhysicsComponent vehiclePhysics = mPhysics.get(vehicle);
+		final Physics operatorPhysics = mPhysics.get(operator);
+		final Physics vehiclePhysics = mPhysics.get(vehicle);
 
 		return vehiclePhysics.getPosition().dst(operatorPhysics.getPosition());
 	}
@@ -68,20 +68,20 @@ public class VehicleMountingSystem extends DualEntityProcessingSystem {
 	}
 
 	private void stuffOperatorInTrunk(Entity o, Entity v) {
-		VehicleOperatorComponent operator = mVehicleOperator.get(o);
+		VehicleOperator operator = mVehicleOperator.get(o);
 		operator.enterVehicle = false;
 
-		final VehicleComponent vehicle = mVehicle.get(v);
+		final Vehicle vehicle = mVehicle.get(v);
 		vehicle.occupantData = App.engine.factory.serialize(o);
 		o.deleteFromWorld();
 	}
 
-	private void joinTeam(Entity e, TeamComponent team) {
+	private void joinTeam(Entity e, Team team) {
 		if (team != null) {
 			if (mTeam.has(e)) {
-				mTeam.get(e).team = team.team;
+				mTeam.get(e).teamType = team.teamType;
 			} else {
-				e.edit().create(TeamComponent.class).team = team.team;
+				e.edit().create(Team.class).teamType = team.teamType;
 			}
 		}
 	}

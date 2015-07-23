@@ -15,7 +15,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Logger;
 import com.badlogic.gdx.utils.ObjectMap;
-import com.deftwun.zombiecopter.components.PhysicsComponent;
+import com.deftwun.zombiecopter.components.Physics;
 import com.deftwun.zombiecopter.systems.SpawnSystem;
 import net.dermetfan.gdx.physics.box2d.Box2DMapObjectParser;
 
@@ -105,7 +105,7 @@ public class Level {
 		// 				other wise collisions won't be handled properly.)
 		entity = App.engine.createEntity();
 		
-		PhysicsComponent physics = App.engine.createComponent(entity,PhysicsComponent.class);
+		Physics physics = App.engine.createComponent(entity,Physics.class);
 		for (ObjectMap.Entry<String,Body> entry :  parser.getBodies()){
 			physics.addBody(entry.key,entry.value);
 		}

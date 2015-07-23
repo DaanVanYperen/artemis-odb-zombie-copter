@@ -8,7 +8,7 @@ import com.deftwun.zombiecopter.App;
 import com.deftwun.zombiecopter.ComponentMappers;
 import com.deftwun.zombiecopter.components.Collectable;
 import com.deftwun.zombiecopter.components.Collector;
-import com.deftwun.zombiecopter.components.PhysicsComponent;
+import com.deftwun.zombiecopter.components.Physics;
 
 public class CollectableSystem extends EntityProcessingSystem {
 
@@ -16,7 +16,7 @@ public class CollectableSystem extends EntityProcessingSystem {
 
 	@SuppressWarnings("unchecked")
 	public CollectableSystem() {
-		super(Aspect.all(PhysicsComponent.class, Collector.class));
+		super(Aspect.all(Physics.class, Collector.class));
 	}
 
 	@Override
@@ -29,14 +29,14 @@ public class CollectableSystem extends EntityProcessingSystem {
 	@Override
 	protected void process(Entity entity) {
 		ComponentMappers maps =App.engine.mappers;
-		PhysicsComponent physics = maps.physics.get(entity);
+		Physics physics = maps.physics.get(entity);
 		Collector collector = maps.collector.get(entity);
 
 		final IntBag collectables = App.engine.getEntitiesFor(Aspect.all(Collectable.class));
 		for (int i = 0, s = collectables.size(); i < s; i++) {
 			collectableFly.id = collectables.get(i);
 			Collectable c = maps.collectable.get(collectableFly);
-			PhysicsComponent p = maps.physics.get(collectableFly);
+			Physics p = maps.physics.get(collectableFly);
 			if (c!= null && p != null){
 				if (p.getPosition().sub(physics.getPosition()).len() < c.pickupRange){
 					if (c.type == Collectable.ItemType.Civilian && collector.civilians < collector.maxCivilians) {

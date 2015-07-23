@@ -3,7 +3,6 @@ package com.deftwun.zombiecopter.systems;
 import com.artemis.Aspect;
 import com.artemis.Entity;
 import com.artemis.systems.EntityProcessingSystem;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.joints.WheelJoint;
@@ -24,13 +23,13 @@ public class MoveSystem extends EntityProcessingSystem {
 	
 	@SuppressWarnings("unchecked")
 	public MoveSystem(){
-		super(Aspect.all(PhysicsComponent.class, ControllerComponent.class)
-				    .one(WalkComponent.class,
-						 JumpComponent.class,
-						 LedgeHangComponent.class,
-						 ThrusterComponent.class,
-						 HelicopterComponent.class,
-						 CarComponent.class));
+		super(Aspect.all(Physics.class, Controller.class)
+				    .one(Walk.class,
+						 Jump.class,
+						 LedgeHang.class,
+						 Thruster.class,
+						 Helicopter.class,
+						 Car.class));
 		logger.debug("initializing");
 	}
 	
@@ -45,15 +44,15 @@ public class MoveSystem extends EntityProcessingSystem {
 		ComponentMappers mappers = App.engine.mappers;
 
 		final float deltaTime = world.delta;
-		ControllerComponent controller = mappers.controller.get(entity);
-		PhysicsComponent physics = mappers.physics.get(entity);
-		SpriteComponent sprite = mappers.sprite.get(entity);
-		WalkComponent walk = mappers.walk.get(entity);
-		JumpComponent jump = mappers.jump.get(entity);
-		LedgeHangComponent ledge = mappers.ledge.get(entity);
-		ThrusterComponent thrust = mappers.thrust.get(entity);
-		HelicopterComponent copter = mappers.helicopter.get(entity);
-		CarComponent car = mappers.car.get(entity);
+		Controller controller = mappers.controller.get(entity);
+		Physics physics = mappers.physics.get(entity);
+		Sprite sprite = mappers.sprite.get(entity);
+		Walk walk = mappers.walk.get(entity);
+		Jump jump = mappers.jump.get(entity);
+		LedgeHang ledge = mappers.ledge.get(entity);
+		Thruster thrust = mappers.thrust.get(entity);
+		Helicopter copter = mappers.helicopter.get(entity);
+		Car car = mappers.car.get(entity);
 		
 		//Physics variables
 		Body body = physics.getPrimaryBody();
@@ -74,7 +73,7 @@ public class MoveSystem extends EntityProcessingSystem {
 		
 		
 		//flip sprite
-		Sprite s = sprite.spriteMap.get(physics.getPrimaryBodyName());
+		com.badlogic.gdx.graphics.g2d.Sprite s = sprite.spriteMap.get(physics.getPrimaryBodyName());
 		if (s != null){
 		//if (physics != null && sprite != null && controller.moveVector.x != 0) {
 			//for (Sprite s : sprite.spriteMap.values()){

@@ -3,14 +3,13 @@ package com.deftwun.zombiecopter.systems;
 import com.artemis.Aspect;
 import com.artemis.Entity;
 import com.artemis.systems.EntityProcessingSystem;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Logger;
 import com.deftwun.zombiecopter.App;
-import com.deftwun.zombiecopter.components.ControllerComponent;
-import com.deftwun.zombiecopter.components.LookComponent;
-import com.deftwun.zombiecopter.components.PhysicsComponent;
-import com.deftwun.zombiecopter.components.SpriteComponent;
+import com.deftwun.zombiecopter.components.Controller;
+import com.deftwun.zombiecopter.components.Look;
+import com.deftwun.zombiecopter.components.Physics;
+import com.deftwun.zombiecopter.components.Sprite;
 
 public class VisionSystem extends EntityProcessingSystem{
      
@@ -19,17 +18,17 @@ public class VisionSystem extends EntityProcessingSystem{
 	
     @SuppressWarnings("unchecked")
     public VisionSystem(){
-        super(Aspect.all(PhysicsComponent.class, LookComponent.class));
+        super(Aspect.all(Physics.class, Look.class));
         logger = new Logger("VisionSystem",LOG_LEVEL);
         logger.debug("initializing");
     }
      
     @Override
     protected void process(Entity entity) {
-        PhysicsComponent phys = App.engine.mappers.physics.get(entity);
-		ControllerComponent controller = App.engine.mappers.controller.get(entity);
-        LookComponent look = App.engine.mappers.look.get(entity);
-        SpriteComponent sprite = App.engine.mappers.sprite.get(entity);
+        Physics phys = App.engine.mappers.physics.get(entity);
+		Controller controller = App.engine.mappers.controller.get(entity);
+        Look look = App.engine.mappers.look.get(entity);
+        Sprite sprite = App.engine.mappers.sprite.get(entity);
 				
         if (look.isSweeping){
         	if (look.sweepAcc >= look.sweepAngle){
@@ -48,8 +47,8 @@ public class VisionSystem extends EntityProcessingSystem{
         //Sprite flipping
         //TODO: Make sure no other systems flip the sprite after this
         if (look.controlSpriteFlip && sprite != null){
-        	Sprite visionSprite = sprite.spriteMap.get("visionBody");
-        	for (Sprite s : sprite.spriteMap.values()){
+        	com.badlogic.gdx.graphics.g2d.Sprite visionSprite = sprite.spriteMap.get("visionBody");
+        	for (com.badlogic.gdx.graphics.g2d.Sprite s : sprite.spriteMap.values()){
         		if (s == visionSprite){
         			if (look.direction.angle() > 90 && look.direction.angle() <  270)
         				visionSprite.setFlip(false, true);
